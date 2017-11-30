@@ -14,6 +14,8 @@ public class UserIntent {
     //过滤条件列表
     private List<Integer> predefinedFilterIds;
     //预过滤条件列表
+    private List<Order> orders;
+    //排序规则列表
     private Integer distinct;
     //是否删除重复记录
     private Integer returnNumber;
@@ -24,6 +26,7 @@ public class UserIntent {
         objectsIDs = new ArrayList<>();
         filterList = new ArrayList<>();
         predefinedFilterIds = new ArrayList<>();
+        orders = new ArrayList<>();
     }
 
     public List<Integer> getObjectsIDs() {
@@ -48,6 +51,14 @@ public class UserIntent {
 
     public void setPredefinedFilterIds(List<Integer> predefinedFilterIds) {
         this.predefinedFilterIds = predefinedFilterIds;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     public Integer getDistinct() {
@@ -76,5 +87,9 @@ public class UserIntent {
 
     public void addPredefinedFilter(int predefinedFilterID){
         predefinedFilterIds.add(predefinedFilterID);
+    }
+
+    public void addOrder(Order order){
+        orders.add(order);
     }
 }
