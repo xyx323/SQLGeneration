@@ -25,7 +25,13 @@ public class FilterController {
 
     @RequestMapping(value = "/setPredefinedFilter", method = RequestMethod.POST)
     public int setPredefinedFilter(@RequestBody Map<String, Object> predefinedFilter){
-
+        int filterID = (int) predefinedFilter.get("filter");
+        if (!Application.userIntent.getPredefinedFilterIds().contains(filterID)){
+            Application.userIntent.addPredefinedFilter(filterID);
+        }
+        else{
+            return 2;
+        }
         return 1;
     }
 }
