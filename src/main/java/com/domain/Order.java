@@ -5,18 +5,18 @@ package com.domain;
  */
 public class Order {
 
-    private Integer ObjectId;
+    private Integer objectId;
     //排序对象Id
     private Integer order;
     //排序方法
 
 
     public Integer getObjectId() {
-        return ObjectId;
+        return objectId;
     }
 
     public void setObjectId(Integer objectId) {
-        ObjectId = objectId;
+        this.objectId = objectId;
     }
 
     public Integer getOrder() {

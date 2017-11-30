@@ -5,44 +5,66 @@ package com.domain;
  */
 public class Filter {
 
-    private Integer ObjectId;
+    private Integer object;
     //过滤条件涉及的对象ID
-    private Integer Operator;
+    private Integer operator;
     //过滤条件操作符
-    private Integer OperandType;
+    private Integer operandType;
     //过滤条件操作数类型
-    private String Operand;
+    private String operand;
     //过滤条件操作数（数值，字符串，子查询等等）
 
-    public Integer getObjectId() {
-        return ObjectId;
+    public Integer getObject() {
+        return object;
     }
 
-    public void setObjectId(Integer objectId) {
-        ObjectId = objectId;
+    public void setObject(Integer object) {
+        this.object = object;
     }
 
     public Integer getOperator() {
-        return Operator;
+        return operator;
     }
 
     public void setOperator(Integer operator) {
-        Operator = operator;
+        this.operator = operator;
     }
 
     public Integer getOperandType() {
-        return OperandType;
+        return operandType;
     }
 
     public void setOperandType(Integer operandType) {
-        OperandType = operandType;
+        this.operandType = operandType;
     }
 
     public String getOperand() {
-        return Operand;
+        return operand;
     }
 
     public void setOperand(String operand) {
-        Operand = operand;
+        this.operand = operand;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Filter filter = (Filter) o;
+
+        if (object != null ? !object.equals(filter.object) : filter.object != null) return false;
+        if (operator != null ? !operator.equals(filter.operator) : filter.operator != null) return false;
+        if (operandType != null ? !operandType.equals(filter.operandType) : filter.operandType != null) return false;
+        return operand != null ? operand.equals(filter.operand) : filter.operand == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = object != null ? object.hashCode() : 0;
+        result = 31 * result + (operator != null ? operator.hashCode() : 0);
+        result = 31 * result + (operandType != null ? operandType.hashCode() : 0);
+        result = 31 * result + (operand != null ? operand.hashCode() : 0);
+        return result;
     }
 }

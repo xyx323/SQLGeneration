@@ -1,5 +1,6 @@
 package com.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,55 +8,73 @@ import java.util.List;
  */
 public class UserIntent {
 
-    private List<Integer> ObjectsIDs;
+    private List<Integer> objectsIDs;
     //查询的对象Id列表
-    private List<Filter> FilterList;
+    private List<Filter> filterList;
     //过滤条件列表
-    private List<Integer> PredefinedFilterIds;
+    private List<Integer> predefinedFilterIds;
     //预过滤条件列表
-    private Integer Distinct;
+    private Integer distinct;
     //是否删除重复记录
-    private Integer ReturnNumber;
+    private Integer returnNumber;
     //返回记录数目
 
 
+    public UserIntent() {
+        objectsIDs = new ArrayList<>();
+        filterList = new ArrayList<>();
+        predefinedFilterIds = new ArrayList<>();
+    }
+
     public List<Integer> getObjectsIDs() {
-        return ObjectsIDs;
+        return objectsIDs;
     }
 
     public void setObjectsIDs(List<Integer> objectsIDs) {
-        ObjectsIDs = objectsIDs;
+        this.objectsIDs = objectsIDs;
     }
 
     public List<Filter> getFilterList() {
-        return FilterList;
+        return filterList;
     }
 
     public void setFilterList(List<Filter> filterList) {
-        FilterList = filterList;
+        this.filterList = filterList;
     }
 
     public List<Integer> getPredefinedFilterIds() {
-        return PredefinedFilterIds;
+        return predefinedFilterIds;
     }
 
     public void setPredefinedFilterIds(List<Integer> predefinedFilterIds) {
-        PredefinedFilterIds = predefinedFilterIds;
+        this.predefinedFilterIds = predefinedFilterIds;
     }
 
     public Integer getDistinct() {
-        return Distinct;
+        return distinct;
     }
 
     public void setDistinct(Integer distinct) {
-        Distinct = distinct;
+        this.distinct = distinct;
     }
 
     public Integer getReturnNumber() {
-        return ReturnNumber;
+        return returnNumber;
     }
 
     public void setReturnNumber(Integer returnNumber) {
-        ReturnNumber = returnNumber;
+        this.returnNumber = returnNumber;
+    }
+
+    public void addObjectID(int objectID){
+        objectsIDs.add(objectID);
+    }
+
+    public void addFilter(Filter filter){
+        filterList.add(filter);
+    }
+
+    public void addPredefinedFilter(int predefinedFilterID){
+        predefinedFilterIds.add(predefinedFilterID);
     }
 }

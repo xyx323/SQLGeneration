@@ -1,5 +1,7 @@
 package com.controller;
 
+import com.Application;
+import com.domain.Filter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,8 +13,13 @@ import java.util.Map;
 @RestController
 public class FilterController {
     @RequestMapping(value = "/setFilter", method = RequestMethod.POST)
-    public int setFilter(@RequestBody Map<String, Object> filter){
-
+    public int setFilter(@RequestBody Filter filter){
+        if (!Application.userIntent.getFilterList().contains(filter)){
+            Application.userIntent.addFilter(filter);
+        }
+        else{
+            return 2;
+        }
         return 1;
     }
 
