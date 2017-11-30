@@ -1,4 +1,4 @@
-package com.boot;
+package com;
 
 /**
  * Created by Bruinx on 2017/11/29.
