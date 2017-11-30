@@ -1,4 +1,4 @@
-package hello;
+package com.boot;
 
 /**
  * Created by Bruinx on 2017/11/30.

@@ -1,10 +1,8 @@
-package hello;
+package com.boot;
 
 /**
  * Created by Bruinx on 2017/11/29.
  */
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
