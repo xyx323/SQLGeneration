@@ -1,5 +1,6 @@
 package com.repository;
 
+import com.entity.Object;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 @Repository
 @Table(name="object")
 @Qualifier("objectRepository")
-public interface ObjectRepository extends CrudRepository<Object, Integer >{
+public interface ObjectRepository extends CrudRepository<Object, Integer>{
 
     public Object findOne(Integer id);
 

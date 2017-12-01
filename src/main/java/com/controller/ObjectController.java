@@ -13,6 +13,9 @@ public class ObjectController {
 
     @RequestMapping(value = "/setObjects", method = RequestMethod.POST)
     public int setObjects(@RequestBody Map<String, Object> params){
+        if (params.get("objects") == null) {
+            return 3;
+        }
         Object obj = params.get("objects");
         if (obj instanceof List<?>){
             objectIDs = (List<Integer>) params.get("objects");
