@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="data_field")
-public class Field {
+public class DataField {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int fild_id;

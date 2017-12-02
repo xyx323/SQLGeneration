@@ -4,15 +4,10 @@ import com.Application;
 import com.domain.Filter;
 import com.domain.Order;
 import com.entity.DataTable;
-import com.entity.Field;
+import com.entity.DataField;
 import com.entity.Object;
-import com.repository.DataTableRepository;
-import com.repository.FieldRepository;
-import com.repository.FilterRepository;
-import com.repository.ObjectRepository;
-import org.apache.catalina.LifecycleState;
+import com.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,10 +28,13 @@ public class GenerateSQLController {
     private ObjectRepository objectRepository;
 
     @Autowired
-    private FieldRepository fieldRepository;
+    private DataFieldRepository fieldRepository;
 
     @Autowired
     private DataTableRepository dataTableRepository;
+
+    @Autowired
+    private DataFoundationRepository dataFoundationRepository;
 
     @Autowired
     private FilterRepository filterRepository;
@@ -144,7 +142,7 @@ public class GenerateSQLController {
         Object o = objectRepository.findOne(oID);
         // 属性字段
         if (o.getObject_type() == 1){
-            Field field = fieldRepository.findOne(Integer.parseInt(o.getRelated_field()));
+            DataField field = fieldRepository.findOne(Integer.parseInt(o.getRelated_field()));
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
             if (!relatedTables.contains(dataTable.getTable_name())){
                 relatedTables.add(dataTable.getTable_name());

@@ -1,14 +1,17 @@
 package com.repository;
 
-import com.entity.DataTable;
+import com.entity.Folder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Table;
 
+/**
+ * Created by Bruinx on 2017/12/2.
+ */
 @Repository
-@Table(name="data_table")
-@Qualifier("dataTableRepository")
-public interface DataTableRepository extends CrudRepository<DataTable, Integer > {
+@Table(name = "folder")
+@Qualifier("folderRepository")
+public interface FolderRepository extends CrudRepository<Folder, Integer>{
 }
