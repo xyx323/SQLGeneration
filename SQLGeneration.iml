@@ -84,6 +84,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: net.minidev:accessors-smart:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.38" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.44" level="project" />
   </component>
 </module>

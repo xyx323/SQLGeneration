@@ -45,13 +45,13 @@ public class GenerateSQLController {
 
     static {
         try {
-            InputStream in = new BufferedInputStream(new FileInputStream("resource/operator.properties"));
-            Properties p = new Properties();
-            p.load(in);
-            p.getProperty("2");
+//            InputStream in = new BufferedInputStream(new FileInputStream("src/main/java/resources/operator.properties"));
+//            Properties p = new Properties();
+//            p.load(in);
+//            p.getProperty("2");
         }
         catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
