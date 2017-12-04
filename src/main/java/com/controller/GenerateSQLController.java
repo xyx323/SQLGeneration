@@ -45,13 +45,13 @@ public class GenerateSQLController {
 
     static {
         try {
-//            InputStream in = new BufferedInputStream(new FileInputStream("src/main/java/resources/operator.properties"));
-//            Properties p = new Properties();
-//            p.load(in);
-//            p.getProperty("2");
+            InputStream in = new BufferedInputStream(new FileInputStream("operator.properties"));
+            Properties p = new Properties();
+            p.load(in);
+            p.getProperty("2");
         }
         catch (Exception e){
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -78,6 +78,9 @@ public class GenerateSQLController {
                 continue;
             }
             resultSQL += ", ";
+        }
+        if (oIDs.size() > 0){
+            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
         }
 
         // 填充过滤条件
@@ -113,29 +116,39 @@ public class GenerateSQLController {
                 continue;
             }
         }
+        if (filters.size() + predefinedFilters.size() > 0){
+            resultSQL = resultSQL.substring(0, resultSQL.length() - 4);
+        }
 
         // 填充from子句
         resultSQL += "FROM ";
         for (String table : relatedTables) {
             resultSQL = resultSQL + table + ", ";
         }
+        if (relatedTables.size() > 0){
+            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
+        }
 
         // 填充排序标准
-        resultSQL += "ORDER BY ";
         List<Order> orders = Application.userIntent.getOrders();
-        for (Order order : orders) {
-            resultSQL = resultSQL + oIDtoFieldName(order.getObject()) + " ";
-            if (order.getOrder() != 1) {
-                resultSQL += "DESC ";
+        if (orders.size() > 0){
+            resultSQL += "ORDER BY ";
+
+            for (Order order : orders) {
+                resultSQL = resultSQL + oIDtoFieldName(order.getObject()) + " ";
+                if (order.getOrder() != 1) {
+                    resultSQL += "DESC ";
+                }
+                resultSQL += ", ";
             }
-            resultSQL += ", ";
+            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
         }
 
         // 如果有设置返回记录数量
         if (Application.userIntent.getReturnNumber() > 0) {
             resultSQL = resultSQL + "LIMIT 0, " + Application.userIntent.getReturnNumber();
         }
-        return "SQL statement";
+        return resultSQL;
     }
 
     private String oIDtoFieldName(int oID){

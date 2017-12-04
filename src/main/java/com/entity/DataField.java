@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class DataField {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int fild_id;
+    private int field_id;
 
     private int table_id;
 
@@ -17,16 +17,16 @@ public class DataField {
 
     private int field_length;
 
-    private boolean is_nk;
+    private boolean is_pk;
 
     private boolean is_fk;
 
-    public int getFild_id() {
-        return fild_id;
+    public int getField_id() {
+        return field_id;
     }
 
-    public void setFild_id(int fild_id) {
-        this.fild_id = fild_id;
+    public void setField_id(int field_id) {
+        this.field_id = field_id;
     }
 
     public int getTable_id() {
@@ -61,12 +61,12 @@ public class DataField {
         this.field_length = field_length;
     }
 
-    public boolean isIs_nk() {
-        return is_nk;
+    public boolean isIs_pk() {
+        return is_pk;
     }
 
-    public void setIs_nk(boolean is_nk) {
-        this.is_nk = is_nk;
+    public void setIs_pk(boolean is_pk) {
+        this.is_pk = is_pk;
     }
 
     public boolean isIs_fk() {

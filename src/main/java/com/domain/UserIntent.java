@@ -27,6 +27,8 @@ public class UserIntent {
         filterList = new ArrayList<>();
         predefinedFilterIds = new ArrayList<>();
         orders = new ArrayList<>();
+        distinct = 0;
+        returnNumber = -1;
     }
 
     public List<Integer> getObjectsIDs() {
