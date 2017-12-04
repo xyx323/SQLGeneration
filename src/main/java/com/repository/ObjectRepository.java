@@ -15,7 +15,4 @@ import javax.persistence.Table;
 @Table(name="object")
 @Qualifier("objectRepository")
 public interface ObjectRepository extends CrudRepository<Object, Integer>{
-
-    public Object findOne(Integer id);
-
 }
