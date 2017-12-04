@@ -11,7 +11,7 @@ public class Filter {
     //过滤条件操作符
     private Integer operandType;
     //过滤条件操作数类型
-    private String operand;
+    private Object operand;
     //过滤条件操作数（数值，字符串，子查询等等）
 
     public Integer getObject() {
@@ -38,11 +38,11 @@ public class Filter {
         this.operandType = operandType;
     }
 
-    public String getOperand() {
+    public Object getOperand() {
         return operand;
     }
 
-    public void setOperand(String operand) {
+    public void setOperand(Object operand) {
         this.operand = operand;
     }
 
