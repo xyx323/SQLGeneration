@@ -2,39 +2,53 @@ package com.controller;
 
 import com.Application;
 import com.domain.Filter;
+import com.domain.ReturnContent;
+import com.domain.ReturnContentEnum;
+import com.repository.FilterRepository;
+import com.repository.ObjectRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 public class FilterController {
+    @Autowired
+    private FilterRepository filterRepository;
+
+    @Autowired
+    private ObjectRepository objectRepository;
+
     @RequestMapping(value = "/setFilter", method = RequestMethod.POST)
-    public int setFilter(@RequestBody Filter filter){
-        if (!Application.userIntent.getFilterList().contains(filter)){
+    public ReturnContent setFilter(@RequestBody Filter filter){
+        if (!Application.userIntent.getFilterList().contains(filter)) {
             Application.userIntent.addFilter(filter);
+        } else {
+            return new ReturnContent(ReturnContentEnum.FILTER_EXISTED.getStatus(), ReturnContentEnum.FILTER_EXISTED.getInfo());
         }
-        else{
-            return 2;
-        }
-        return 1;
+        return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
     }
 
     @RequestMapping(value = "/setPredefinedFilter", method = RequestMethod.POST)
-    public int setPredefinedFilter(@RequestBody Map<String, Object> predefinedFilter){
-        if (predefinedFilter.get("filter") == null) {
-            return 3;
+    public ReturnContent setPredefinedFilter(@RequestBody Map<String, Object> predefinedFilter){
+        try {
+            if (predefinedFilter.get("filter") == null) {
+                return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
+            }
+            int filterID = (int) predefinedFilter.get("filter");
+            if (!Application.userIntent.getPredefinedFilterIds().contains(filterID)) {
+                Application.userIntent.addPredefinedFilter(filterID);
+            } else {
+                return new ReturnContent(ReturnContentEnum.FILTER_EXISTED.getStatus(), ReturnContentEnum.FILTER_EXISTED.getInfo());
+            }
+            return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
         }
-        int filterID = (int) predefinedFilter.get("filter");
-        if (!Application.userIntent.getPredefinedFilterIds().contains(filterID)){
-            Application.userIntent.addPredefinedFilter(filterID);
+        catch (ClassCastException e){
+            return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(), ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
         }
-        else{
-            return 2;
-        }
-        return 1;
     }
 }

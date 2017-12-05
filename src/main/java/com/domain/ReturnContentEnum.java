@@ -5,9 +5,12 @@ package com.domain;
  */
 public enum ReturnContentEnum {
 
-    Return0(0,"正常"),
-    Return1(1,"输入错误"),
-    Return2(2,"找不到对象");
+    SUCCESS(0,"正常"),
+    PARAMETER_TYPE_ERROR(1,"参数类型错误"),
+    OBJECT_NOT_FOUND(2,"找不到对象"),
+    FILTER_EXISTED(3, "过滤条件已存在"),
+    ORDER_EXISTED(3, "排序条件已存在"),
+    PARAMETER_NOT_FOUND(4, "未找到对应参数");
 
     private ReturnContentEnum(Integer status, String info){
         this.status = status;

@@ -1,6 +1,8 @@
 package com.controller;
 
 import com.Application;
+import com.domain.ReturnContent;
+import com.domain.ReturnContentEnum;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,12 +16,17 @@ import java.util.Map;
 @RestController
 public class ReturnNumberController {
     @RequestMapping(value = "/setReturnNumber", method = RequestMethod.POST)
-    public int setFilter(@RequestBody Map<String, Object> returnNumber){
-        if (returnNumber.get("returnNumber") == null){
-            return 3;
+    public ReturnContent setFilter(@RequestBody Map<String, Object> returnNumber){
+        try {
+            if (returnNumber.get("returnNumber") == null) {
+                return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
+            }
+            int returnNum = (int) returnNumber.get("returnNumber");
+            Application.userIntent.setReturnNumber(returnNum);
+            return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
         }
-        int returnNum = (int) returnNumber.get("returnNumber");
-        Application.userIntent.setReturnNumber(returnNum);
-        return 1;
+        catch (ClassCastException e){
+            return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(), ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
+        }
     }
 }

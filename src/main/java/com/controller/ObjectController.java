@@ -22,7 +22,7 @@ public class ObjectController {
     @RequestMapping(value = "/setObjects", method = RequestMethod.POST)
     public ReturnContent setObjects(@RequestBody Map<String, Object> params){
         if (params.get("objects") == null) {
-            return new ReturnContent(ReturnContentEnum.Return1.getStatus(), ReturnContentEnum.Return1.getInfo());
+            return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
         }
         Object obj = params.get("objects");
         if (obj instanceof List<?>){
@@ -35,13 +35,13 @@ public class ObjectController {
                     }
                 }
                 else{
-                    return new ReturnContent(ReturnContentEnum.Return2.getStatus(), ReturnContentEnum.Return2.getInfo());
+                    return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
                 }
             }
         }
         else{
-            return new ReturnContent(ReturnContentEnum.Return1.getStatus(), ReturnContentEnum.Return1.getInfo());
+            return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(), ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
         }
-        return new ReturnContent(ReturnContentEnum.Return0.getStatus(), ReturnContentEnum.Return0.getInfo());
+        return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
     }
 }
