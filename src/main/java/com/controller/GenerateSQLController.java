@@ -70,10 +70,11 @@ public class GenerateSQLController {
 
         // 设置是否返回重复记录
         String resultSQL = "";
+        String selectClause = "";
         if (Application.userIntent.getDistinct() == 1) {
-            resultSQL += "SELECT DISTINCT ";
+            selectClause += "SELECT DISTINCT ";
         } else {
-            resultSQL += "SELECT ";
+            selectClause += "SELECT ";
         }
 
         // 填充查询字段
@@ -81,19 +82,19 @@ public class GenerateSQLController {
         for (int oID : oIDs) {
             String fieldName = oIDtoFieldName(oID);
             if (fieldName != null) {
-                resultSQL += fieldName;
+                selectClause += fieldName;
             } else {
                 // TODO: 没找到对应
                 continue;
             }
-            resultSQL += ", ";
+            selectClause += ", ";
         }
         if (oIDs.size() > 0){
-            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
+            selectClause = selectClause.substring(0, selectClause.length()-2) + " ";
         }
 
         // 填充过滤条件
-        resultSQL += "WHERE ";
+        String whereClause = "WHERE ";
         List<Filter> filters = Application.userIntent.getFilterList();
         for (Filter filter : filters) {
 //            String fieldName = oIDtoFieldName(filter.getObject());
@@ -109,7 +110,7 @@ public class GenerateSQLController {
 //            }
             String filterStr = getOperator(filter);
             if (filterStr != null){
-                resultSQL = resultSQL + filterStr + " AND ";
+                whereClause = whereClause + filterStr + " AND ";
             }
         }
 
@@ -122,7 +123,7 @@ public class GenerateSQLController {
             // TODO: 处理不同类型的操作数
             String operand = preFilter.getOperands();
             if (fieldName != null && operator != null && operand != null) {
-                resultSQL = resultSQL + fieldName + " " + operator + " "
+                whereClause = whereClause + fieldName + " " + operator + " "
                         + operand + " AND ";
             } else {
                 // TODO: 错误处理
@@ -130,37 +131,41 @@ public class GenerateSQLController {
             }
         }
         if (filters.size() + predefinedFilters.size() > 0){
-            resultSQL = resultSQL.substring(0, resultSQL.length() - 4);
+            whereClause = whereClause.substring(0, whereClause.length() - 4);
         }
 
         // 填充from子句
-        resultSQL += "FROM ";
+        String fromClause = "FROM ";
         for (String table : relatedTables) {
-            resultSQL = resultSQL + table + ", ";
+            fromClause = fromClause + table + ", ";
         }
         if (relatedTables.size() > 0){
-            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
+            fromClause = fromClause.substring(0, fromClause.length()-2) + " ";
         }
 
         // 填充排序标准
+        String orderClause = "";
         List<Order> orders = Application.userIntent.getOrders();
         if (orders.size() > 0){
-            resultSQL += "ORDER BY ";
+            orderClause += "ORDER BY ";
 
             for (Order order : orders) {
-                resultSQL = resultSQL + oIDtoFieldName(order.getObject()) + " ";
+                orderClause = orderClause + oIDtoFieldName(order.getObject()) + " ";
                 if (order.getOrder() != 1) {
-                    resultSQL += "DESC ";
+                    orderClause += "DESC ";
                 }
-                resultSQL += ", ";
+                orderClause += ", ";
             }
-            resultSQL = resultSQL.substring(0, resultSQL.length()-2) + " ";
+            orderClause = orderClause.substring(0, orderClause.length()-2) + " ";
         }
 
         // 如果有设置返回记录数量
+        String limitClause = "";
         if (Application.userIntent.getReturnNumber() > 0) {
-            resultSQL = resultSQL + "LIMIT 0, " + Application.userIntent.getReturnNumber();
+            limitClause = limitClause + "LIMIT 0, " + Application.userIntent.getReturnNumber();
         }
+
+        resultSQL = selectClause + fromClause + whereClause + orderClause + limitClause;
         return resultSQL;
     }
 
@@ -203,53 +208,84 @@ public class GenerateSQLController {
         String operator = operatorProp.getProperty(String.valueOf(filter.getOperator()));
         if (operator == null){
             // TODO: 错误处理 无法得到操作符
+            return null;
         }
+
+        int type = filter.getOperandType();
         java.lang.Object operand = filter.getOperand();
-        switch (filter.getOperator()){
+        switch (filter.getOperator()) {
             case 7:
             case 8:
-                if (!(operand instanceof List<?>)){
+                if (!(operand instanceof List<?>)) {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
-                List<java.lang.Object> boundries = (List<java.lang.Object>)operand;
+                List<java.lang.Object> boundries = (List<java.lang.Object>) operand;
                 if (boundries.size() != 2) {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
-                if (boundries.get(0) instanceof String && boundries.get(1) instanceof String){
-                    return fieldName + " " + operator + " '" + boundries.get(0) + "' AND '" + boundries.get(1) + "'";
+                if (type == 1) {
+                    if (boundries.get(0) instanceof String && boundries.get(1) instanceof String) {
+                        return fieldName + " " + operator + " '" + boundries.get(0) + "' AND '" + boundries.get(1) + "'";
+                    } else {
+                        return fieldName + " " + operator + " " + boundries.get(0) + " AND " + boundries.get(1);
+                    }
                 }
-                else{
-                    return fieldName + " " + operator + " " + boundries.get(0) + " AND " + boundries.get(1);
+                else if (type == 2) {
+                    if (boundries.get(0) instanceof Integer && boundries.get(1) instanceof Integer) {
+                        return fieldName + " " + operator + " "
+                                + oIDtoFieldName((int) boundries.get(0)) + " AND " + oIDtoFieldName((int) boundries.get(1));
+                    } else {
+                        // TODO: 错误处理 类型不匹配
+                        return null;
+                    }
+                }
+                else {
+                    // TODO: 处理其他类型的操作数
+                    return null;
                 }
             case 9:
             case 10:
-                if (!(operand instanceof List<?>)){
+                if (!(operand instanceof List<?>)) {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
-                List<java.lang.Object> candidates = (List<java.lang.Object>)operand;
+                List<java.lang.Object> candidates = (List<java.lang.Object>) operand;
                 String candiStr = "( ";
-                if (candidates.size() == 0){
-                    // TODO: 错误处理 类型不匹配
+                if (candidates.size() == 0) {
+                    // TODO: 错误处理 无候选值
                     return null;
                 }
-                for (java.lang.Object candidate : candidates){
-                    if (candidate instanceof String){
-                        candiStr = candiStr + "'" + candidate + "', ";
+                if (type == 1) {
+                    for (java.lang.Object candidate : candidates) {
+                        if (candidate instanceof String) {
+                            candiStr = candiStr + "'" + candidate + "', ";
+                        } else if (candidate instanceof Boolean) {
+                            if ((boolean) candidate) {
+                                candiStr = candiStr + "1, ";
+                            } else {
+                                candiStr = candiStr + "0, ";
+                            }
+                        } else {
+                            candiStr = candiStr + candidate + ", ";
+                        }
                     }
-                    else if (candidate instanceof Boolean){
-                        if ((boolean)candidate){
-                            candiStr = candiStr + "1, " ;
+                }
+                else if (type == 2){
+                    for (java.lang.Object candidate : candidates) {
+                        if (!(candidate instanceof Integer)) {
+                            // TODO: 错误处理 类型不匹配
+                            return null;
                         }
                         else {
-                            candiStr = candiStr + "0, " ;
+                            candiStr = candiStr + oIDtoFieldName((int) candidate) + ", ";
                         }
                     }
-                    else{
-                        candiStr = candiStr + candidate + ", ";
-                    }
+                }
+                else {
+                    // TODO: 处理其他类型的操作数
+                    return null;
                 }
                 candiStr = candiStr.substring(0, candiStr.length() - 2) + " )";
                 return fieldName + " " + operator + " " + candiStr;
@@ -258,57 +294,81 @@ public class GenerateSQLController {
                 return fieldName + " " + operator;
             case 13:
             case 14:
-                if (!(operand instanceof String)){
+                if (!(operand instanceof String) || type != 1) {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
                 return fieldName + " " + operator + " '" + (String) operand + "'";
             case 15:
-                if (!(operand instanceof List<?>)){
+                if (!(operand instanceof List<?>)) {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
                 List<java.lang.Object> allValues = (List<java.lang.Object>) operand;
-                if (allValues.size() == 0){
-                    // TODO: 错误处理 类型不匹配
+                if (allValues.size() == 0) {
+                    // TODO: 错误处理 无操作数
                     return null;
                 }
                 String resultFilter = "( ";
-                for (java.lang.Object value : allValues){
-                    String subFilter = "";
-                    if (value instanceof String){
-                        subFilter = fieldName + " = " + "'" + value + "' OR ";
-                    }
-                    else if (value instanceof Boolean){
-                        if ((boolean)value){
-                            subFilter = fieldName + " = 1 OR " ;
+                if (type == 1) {
+                    for (java.lang.Object value : allValues) {
+                        String subFilter = "";
+                        if (value instanceof String) {
+                            subFilter = fieldName + " = " + "'" + value + "' OR ";
+                        } else if (value instanceof Boolean) {
+                            if ((boolean) value) {
+                                subFilter = fieldName + " = 1 OR ";
+                            } else {
+                                subFilter = fieldName + " = 0 OR ";
+                            }
+                        } else {
+                            subFilter = fieldName + " = " + value + " OR ";
                         }
-                        else {
-                            subFilter = fieldName + " = 0 OR " ;
+                        resultFilter += subFilter;
+                    }
+                }
+                else if (type == 2){
+                    for (java.lang.Object value : allValues) {
+                        String subFilter = "";
+                        if (!(value instanceof Integer)) {
+                            // TODO: 错误处理 类型不匹配
+                            return null;
                         }
+                        subFilter = fieldName + " = " + oIDtoFieldName((int) value) + " OR ";
+                        resultFilter += subFilter;
                     }
-                    else{
-                        subFilter = fieldName + " = " + value + " OR ";
-                    }
-                    resultFilter += subFilter;
+                }
+                else{
+                    // TODO: 处理其他类型的操作数
+                    return null;
                 }
 
                 resultFilter = resultFilter.substring(0, resultFilter.length() - 3) + ")";
                 return resultFilter;
             default:
-                if (operand instanceof String){
-                    return fieldName + " " + operator + " '" + operand + "'";
+                if (type == 1) {
+                    if (operand instanceof String) {
+                        return fieldName + " " + operator + " '" + operand + "'";
+                    } else if (operand instanceof Boolean) {
+                        if ((boolean) operand) {
+                            return fieldName + " = 1";
+                        } else {
+                            return fieldName + " = 0";
+                        }
+                    } else {
+                        return fieldName + " " + operator + " " + operand;
+                    }
                 }
-                else if(operand instanceof Boolean){
-                    if ((boolean)operand){
-                        return fieldName + " = 1";
+                else if (type == 2){
+                    if (!(operand instanceof Integer)) {
+                        // TODO: 错误处理 类型不匹配
+                        return null;
                     }
-                    else {
-                        return fieldName + " = 0";
-                    }
+                    return fieldName + " " + operator + " " + oIDtoFieldName((int) operand);
                 }
                 else{
-                    return fieldName + " " + operator + " " + operand;
+                    // TODO: 处理其他类型的操作数
+                    return null;
                 }
         }
     }

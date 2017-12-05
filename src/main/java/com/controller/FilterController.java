@@ -25,6 +25,10 @@ public class FilterController {
 
     @RequestMapping(value = "/setFilter", method = RequestMethod.POST)
     public ReturnContent setFilter(@RequestBody Filter filter){
+        Object objectEntity = objectRepository.findOne(filter.getObject());
+        if (objectEntity == null) {
+            return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
+        }
         if (!Application.userIntent.getFilterList().contains(filter)) {
             Application.userIntent.addFilter(filter);
         } else {
@@ -40,6 +44,10 @@ public class FilterController {
                 return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
             }
             int filterID = (int) predefinedFilter.get("filter");
+
+            if (filterRepository.findOne(filterID) == null){
+                return new ReturnContent(ReturnContentEnum.FILTER_NOT_FOUND.getStatus(), ReturnContentEnum.FILTER_NOT_FOUND.getInfo());
+            }
             if (!Application.userIntent.getPredefinedFilterIds().contains(filterID)) {
                 Application.userIntent.addPredefinedFilter(filterID);
             } else {
