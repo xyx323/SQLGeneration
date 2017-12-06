@@ -132,15 +132,17 @@ public class GenerateSQLController {
         }
         if (filters.size() + predefinedFilters.size() > 0){
             whereClause = whereClause.substring(0, whereClause.length() - 4);
+        }else {
+            whereClause = "";
         }
 
         // 填充from子句
         String fromClause = "FROM ";
         for (String table : relatedTables) {
-            fromClause = fromClause + table + ", ";
+            fromClause = fromClause + table + " JOIN ";
         }
         if (relatedTables.size() > 0){
-            fromClause = fromClause.substring(0, fromClause.length()-2) + " ";
+            fromClause = fromClause.substring(0, fromClause.length()-6) + " ";
         }
 
         // 填充排序标准
