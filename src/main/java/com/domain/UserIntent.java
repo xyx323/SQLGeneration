@@ -92,6 +92,13 @@ public class UserIntent {
     }
 
     public void addOrder(Order order){
+        for (int i = 0; i < orders.size(); i++){
+            Order o = orders.get(i);
+            if (o.getObject().equals(order.getObject())){
+                orders.set(i, order);
+                return;
+            }
+        }
         orders.add(order);
     }
 }
