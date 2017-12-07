@@ -79,9 +79,11 @@ public class GenerateSQLController {
 
         // 填充查询字段
         List<Integer> oIDs = Application.userIntent.getObjectsIDs();
+        int validOIDNum = 0;
         for (int oID : oIDs) {
             String fieldName = oIDtoFieldName(oID);
             if (fieldName != null) {
+                validOIDNum ++;
                 selectClause += fieldName;
             } else {
                 // TODO: 没找到对应
@@ -89,12 +91,13 @@ public class GenerateSQLController {
             }
             selectClause += ", ";
         }
-        if (oIDs.size() > 0){
+        if (oIDs.size() > 0 && validOIDNum > 0){
             selectClause = selectClause.substring(0, selectClause.length()-2) + " ";
         }
 
         // 填充过滤条件
         String whereClause = "WHERE ";
+        int validFilterNum = 0;
         List<Filter> filters = Application.userIntent.getFilterList();
         for (Filter filter : filters) {
 //            String fieldName = oIDtoFieldName(filter.getObject());
@@ -111,6 +114,7 @@ public class GenerateSQLController {
             String filterStr = getOperator(filter);
             if (filterStr != null){
                 whereClause = whereClause + filterStr + " AND ";
+                validFilterNum ++;
             }
         }
 
@@ -125,12 +129,13 @@ public class GenerateSQLController {
             if (fieldName != null && operator != null && operand != null) {
                 whereClause = whereClause + fieldName + " " + operator + " "
                         + operand + " AND ";
+                validFilterNum ++;
             } else {
                 // TODO: 错误处理
                 continue;
             }
         }
-        if (filters.size() + predefinedFilters.size() > 0){
+        if (filters.size() + predefinedFilters.size() > 0 && validFilterNum > 0){
             whereClause = whereClause.substring(0, whereClause.length() - 4);
         }else {
             whereClause = "";
