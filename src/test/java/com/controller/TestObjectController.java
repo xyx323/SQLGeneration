@@ -24,12 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
-public class testObjectController {
+public class TestObjectController {
 
-    private MockMvc mockMvc;
+    public MockMvc mockMvc;
 
     @Autowired
-    private WebApplicationContext context;
+    public WebApplicationContext context;
 
     @Before
     public void setupMockMvc() throws Exception {
@@ -37,7 +37,7 @@ public class testObjectController {
     }
 
     @Test
-    public void testController0() throws Exception {
+    public void testSetObject0() throws Exception {
 
         String jsonString = "{\"objects\":[1]}";
 
@@ -54,7 +54,7 @@ public class testObjectController {
     }
 
     @Test
-    public void testController1() throws Exception {
+    public void testSetObject1() throws Exception {
 
         String jsonString = "{\"objects\":[1,2,3]}";
 
@@ -71,7 +71,7 @@ public class testObjectController {
     }
 
     @Test
-    public void testController2() throws Exception {
+    public void testSetObject2() throws Exception {
 
         String jsonString = "{\"objects\":\"testString\"}";
 
@@ -88,7 +88,7 @@ public class testObjectController {
     }
 
     @Test
-    public void testController3() throws Exception {
+    public void testSetObject3() throws Exception {
 
         String jsonString = "{\"objects\":1}";
 
@@ -105,7 +105,7 @@ public class testObjectController {
     }
 
     @Test
-    public void testController4() throws Exception {
+    public void testSetObject4() throws Exception {
 
         String jsonString = "{\"objects\":[500,600]}";
 

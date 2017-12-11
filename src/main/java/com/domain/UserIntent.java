@@ -16,7 +16,7 @@ public class UserIntent {
     //预过滤条件列表
     private List<Order> orders;
     //排序规则列表
-    private Integer distinct;
+    private Boolean distinct;
     //是否删除重复记录
     private Integer returnNumber;
     //返回记录数目
@@ -27,7 +27,7 @@ public class UserIntent {
         filterList = new ArrayList<>();
         predefinedFilterIds = new ArrayList<>();
         orders = new ArrayList<>();
-        distinct = 0;
+        distinct = Boolean.FALSE;
         returnNumber = -1;
     }
 
@@ -63,11 +63,11 @@ public class UserIntent {
         this.orders = orders;
     }
 
-    public Integer getDistinct() {
+    public Boolean getDistinct() {
         return distinct;
     }
 
-    public void setDistinct(Integer distinct) {
+    public void setDistinct(Boolean distinct) {
         this.distinct = distinct;
     }
 

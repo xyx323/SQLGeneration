@@ -71,7 +71,7 @@ public class GenerateSQLController {
         // 设置是否返回重复记录
         String resultSQL = "";
         String selectClause = "";
-        if (Application.userIntent.getDistinct() == 1) {
+        if (Application.userIntent.getDistinct() == Boolean.TRUE) {
             selectClause += "SELECT DISTINCT ";
         } else {
             selectClause += "SELECT ";

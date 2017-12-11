@@ -22,7 +22,7 @@ public class DistinctRecordsController {
             if (distinctRecord.get("distinct") == null) {
                 return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
             }
-            int distinct = (int) distinctRecord.get("distinct");
+            Boolean distinct = Boolean.parseBoolean(distinctRecord.get("distinct").toString());
             Application.userIntent.setDistinct(distinct);
             return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
         }
