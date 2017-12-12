@@ -74,6 +74,74 @@ public class TestFilterController {
 
     }
 
+    @Test
+    public void testSetPredefinedFilter1() throws Exception {
+
+        String jsonString = "{\"filttttter\":1}";
+
+        String respStr = mockMvc.perform(post("/setPredefinedFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost.resp:"+respStr);
+
+    }
+
+    @Test
+    public void testSetPredefinedFilter2() throws Exception {
+
+        String jsonString = "{\"filter\":1000}";
+
+        String respStr = mockMvc.perform(post("/setPredefinedFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(2)))
+                .andExpect(jsonPath("$.info",is("找不到预过滤条件")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr);
+
+    }
+
+    @Test
+    public void testSetPredefinedFilter3() throws Exception {
+
+        String jsonString1 = "{\"filter\":1}";
+
+        String respStr1 = mockMvc.perform(post("/setPredefinedFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString1))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(3)))
+                .andExpect(jsonPath("$.info",is("过滤条件已存在")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr1);
+
+    }
+
+    @Test
+    public void testSetPredefinedFilter4() throws Exception {
+
+        String jsonString = "{\"filter\":\"test\"}";
+
+        String respStr = mockMvc.perform(post("/setPredefinedFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr);
+
+    }
+
 }
 
 

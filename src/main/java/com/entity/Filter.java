@@ -17,7 +17,7 @@ public class Filter {
 
     private int operator;
 
-    private int operator_type;
+    private int operand_type;
 
     private String operands;
 
@@ -61,12 +61,12 @@ public class Filter {
         this.operator = operator;
     }
 
-    public int getOperator_type() {
-        return operator_type;
+    public int getOperand_type() {
+        return operand_type;
     }
 
-    public void setOperator_type(int operator_type) {
-        this.operator_type = operator_type;
+    public void setOperand_type(int operand_type) {
+        this.operand_type = operand_type;
     }
 
     public String getOperands() {
