@@ -27,16 +27,19 @@ public class ObjectController {
         Object obj = params.get("objects");
         if (obj instanceof List<?>){
             objectIDs = (List<Integer>) params.get("objects");
-            for (int objectID : objectIDs){
-                com.entity.Object objectEntity = objectRepository.findOne(objectID);
-                if(objectEntity != null){
-                    if (!Application.userIntent.getObjectsIDs().contains(objectID)){
-                        Application.userIntent.addObjectID(objectID);
+            try {
+                for (int objectID : objectIDs) {
+                    com.entity.Object objectEntity = objectRepository.findOne(objectID);
+                    if (objectEntity != null) {
+                        if (!Application.userIntent.getObjectsIDs().contains(objectID)) {
+                            Application.userIntent.addObjectID(objectID);
+                        }
+                    } else {
+                        return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
                     }
                 }
-                else{
-                    return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
-                }
+            } catch (ClassCastException e){
+                return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(), ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
             }
         }
         else{

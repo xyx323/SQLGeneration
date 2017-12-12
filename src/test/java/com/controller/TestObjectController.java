@@ -56,7 +56,7 @@ public class TestObjectController {
     @Test
     public void testSetObject1() throws Exception {
 
-        String jsonString = "{\"objects\":[1,2,3]}";
+        String jsonString = "{\"objects\":[1,2]}";
 
         String respStr1 = mockMvc.perform(post("/setObjects")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,56 @@ public class TestObjectController {
 
     }
 
+    @Test
+    public void testSetObject5() throws Exception {
 
+        String jsonString = "{\"objects\":[\"500\",600]}";
+
+        String respStr4 = mockMvc.perform(post("/setObjects")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost.resp:"+respStr4);
+
+    }
+
+    @Test
+    public void testSetObject6() throws Exception {
+
+        String jsonString = "{\"objects\":500}";
+
+        String respStr4 = mockMvc.perform(post("/setObjects")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost.resp:"+respStr4);
+
+    }
+
+    @Test
+    public void testSetObject7() throws Exception {
+
+        String jsonString = "{\"objects\":true}";
+
+        String respStr4 = mockMvc.perform(post("/setObjects")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost.resp:"+respStr4);
+
+    }
 
 //    @Test
 //    public void test() throws Exception{
