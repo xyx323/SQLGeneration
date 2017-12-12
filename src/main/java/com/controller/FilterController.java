@@ -37,7 +37,7 @@ public class FilterController {
             "BIGINT", "FLOAT", "BIGINT", "FLOAT", "DOUBLE", "DECIMAL"));
 
     private List<String> dbTextTypes = new ArrayList(Arrays.asList("CHAR", "VARCHAR", "TINYTEXT", "TEXT", "MEDIUMTEXT",
-            "LONGTEXT", "TINYBLOB", "BLOB", "MEDIUMBLOB", "LONGBLOB"));
+            "LONGTEXT"));
 
     @RequestMapping(value = "/setFilter", method = RequestMethod.POST)
     public ReturnContent setFilter(@RequestBody Filter filter){
