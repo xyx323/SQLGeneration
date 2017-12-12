@@ -57,7 +57,7 @@ public class TestGenerateSQL {
         testFilterController.testSetPredefinedFilter0();
         testOrderController.testSetOrder0();
         testDistinctRecordsController.testSetDistinctRecords0();
-        testReturnNumberController.testReturnNumber();
+        testReturnNumberController.testReturnNumber0();
 
         String respStr0 = mockMvc.perform(get("/generateSQL"))
                 .andReturn().getResponse().getContentAsString();

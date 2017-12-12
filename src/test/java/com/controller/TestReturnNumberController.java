@@ -38,7 +38,7 @@ public class TestReturnNumberController {
     }
 
     @Test
-    public void testReturnNumber() throws Exception {
+    public void testReturnNumber0() throws Exception {
 
         String jsonString = "{\"returnNumber\":100}";
 
@@ -48,6 +48,38 @@ public class TestReturnNumberController {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.status",is(0)))
                 .andExpect(jsonPath("$.info",is("正常")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testReturnNumber1() throws Exception {
+
+        String jsonString = "{\"rettttttttttttttturnNumber\":100}";
+
+        String respStr0 = mockMvc.perform(post("/setReturnNumber")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testReturnNumber3() throws Exception {
+
+        String jsonString = "{\"returnNumber\":\"teststring\"}";
+
+        String respStr0 = mockMvc.perform(post("/setReturnNumber")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
                 .andReturn().getResponse().getContentAsString();
 
         System.out.println("testPost0.resp:"+respStr0);
