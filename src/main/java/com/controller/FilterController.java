@@ -75,6 +75,48 @@ public class FilterController {
                     }
                 }
             }
+        } else if (objectEntity.getObject_type() == 1 && filter.getOperandType() == 2){
+            String fieldType = findObjectFieldType(objectEntity);
+            if (fieldType != null) {
+                if (filter.getOperand() instanceof List<?>) {
+                    List<java.lang.Object> operands = (List<java.lang.Object>) filter.getOperand();
+                    for (java.lang.Object o : operands) {
+                        if (o instanceof Integer) {
+                            Object operandField = objectRepository.findOne((int) o);
+                            if (operandField == null){
+                                return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(),
+                                        ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
+                            }
+                            String operandFieldType = findObjectFieldType(operandField);
+                            if (operandFieldType != null) {
+                                if (!isTypeMatch(fieldType, operandFieldType)){
+                                    return new ReturnContent(ReturnContentEnum.OPERAND_OBJECT_TYPE_ERROR.getStatus(),
+                                            ReturnContentEnum.OPERAND_OBJECT_TYPE_ERROR.getInfo());
+                                }
+                            }
+                        } else {
+                            return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(),
+                                    ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
+                        }
+                    }
+                } else if (filter.getOperand() instanceof Integer) {
+                    Object operandField = objectRepository.findOne((int) filter.getOperand());
+                    if (operandField == null){
+                        return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(),
+                                ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
+                    }
+                    String operandFieldType = findObjectFieldType(operandField);
+                    if (operandFieldType != null) {
+                        if (!isTypeMatch(fieldType, operandFieldType)){
+                            return new ReturnContent(ReturnContentEnum.OPERAND_OBJECT_TYPE_ERROR.getStatus(),
+                                    ReturnContentEnum.OPERAND_OBJECT_TYPE_ERROR.getInfo());
+                        }
+                    }
+                } else {
+                    return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(),
+                            ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
+                }
+            }
         }
         if (!Application.userIntent.getFilterList().contains(filter)) {
             Application.userIntent.addFilter(filter);
@@ -117,5 +159,14 @@ public class FilterController {
             // TODO: object_type出错
             return null;
         }
+    }
+
+    private boolean isTypeMatch(String type1, String type2){
+        if (dbTextTypes.contains(type1.toUpperCase()) && !(dbTextTypes.contains(type2.toUpperCase()))){
+            return false;
+        } else if (dbNumberTypes.contains(type1.toUpperCase()) && !(dbNumberTypes.contains(type2.toUpperCase()))){
+            return false;
+        }
+        return true;
     }
 }

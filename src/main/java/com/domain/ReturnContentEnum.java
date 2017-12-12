@@ -11,7 +11,8 @@ public enum ReturnContentEnum {
     FILTER_NOT_FOUND(2,"找不到预过滤条件"),
     FILTER_EXISTED(3, "过滤条件已存在"),
     ORDER_EXISTED(3, "排序条件已存在"),
-    PARAMETER_NOT_FOUND(4, "未找到对应参数");
+    PARAMETER_NOT_FOUND(4, "未找到对应参数"),
+    OPERAND_OBJECT_TYPE_ERROR(5,"操作数对象类型与过滤条件对象不匹配");
 
     private ReturnContentEnum(Integer status, String info){
         this.status = status;
