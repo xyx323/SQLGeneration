@@ -37,7 +37,7 @@ public class TestDistinctRecordsController {
     }
 
     @Test
-    public void testSetDistinctRecords() throws Exception {
+    public void testSetDistinctRecords0() throws Exception {
 
         String jsonString = "{\"distinct\":\"true\"}";
 
@@ -52,6 +52,40 @@ public class TestDistinctRecordsController {
         System.out.println("testPost0.resp:"+respStr0);
 
     }
+    @Test
+    public void testSetDistinctRecords1() throws Exception {
+
+        String jsonString = "{\"distinct\":\"false\"}";
+
+        String respStr0 = mockMvc.perform(post("/setDistinctRecords")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(0)))
+                .andExpect(jsonPath("$.info",is("正常")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testSetDistinctRecords2() throws Exception {
+
+        String jsonString = "{\"distttttttttinct\":\"true\"}";
+
+        String respStr0 = mockMvc.perform(post("/setDistinctRecords")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+
 
 }
 

@@ -41,7 +41,7 @@ public class TestOrderController {
     }
 
     @Test
-    public void testSetOrder() throws Exception {
+    public void testSetOrder0() throws Exception {
 
         String jsonString = "{\"object\":1," +
                              "\"order\":1}";
@@ -52,6 +52,57 @@ public class TestOrderController {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.status",is(0)))
                 .andExpect(jsonPath("$.info",is("正常")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testSetOrder1() throws Exception {
+
+        String jsonString = "{\"objjjjject\":1," +
+                "\"orrrrrder\":1}";
+
+        String respStr0 = mockMvc.perform(post("/setOrder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testSetOrder2() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"order\":1}";
+
+        String respStr0 = mockMvc.perform(post("/setOrder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(3)))
+                .andExpect(jsonPath("$.info",is("排序条件已存在")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+    @Test
+    public void testSetOrder3() throws Exception {
+
+        String jsonString = "{\"object\":10000," +
+                "\"order\":1}";
+
+        String respStr0 = mockMvc.perform(post("/setOrder")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(2)))
+                .andExpect(jsonPath("$.info",is("找不到对象")))
                 .andReturn().getResponse().getContentAsString();
 
         System.out.println("testPost0.resp:"+respStr0);
