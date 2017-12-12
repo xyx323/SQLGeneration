@@ -67,4 +67,8 @@ public class Filter {
         result = 31 * result + (operand != null ? operand.hashCode() : 0);
         return result;
     }
+
+    public boolean isAllFieldFilled() {
+        return object != null && operator != null && operandType != null && operand != null;
+    }
 }

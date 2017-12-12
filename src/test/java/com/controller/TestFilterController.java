@@ -58,6 +58,263 @@ public class TestFilterController {
     }
 
     @Test
+    public void testSetFilter1() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":1," +
+                "\"operand\":\"10\"}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(3)))
+                .andExpect(jsonPath("$.info",is("过滤条件已存在")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter2() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":7," +
+                "\"operandType\":1," +
+                "\"operand\":[\"10\",\"12\"]}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(0)))
+                .andExpect(jsonPath("$.info",is("正常")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter3() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":1," +
+                "\"operand\":10}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter4() throws Exception {
+
+        String jsonString = "{\"object\":3," +
+                "\"operator\":1," +
+                "\"operandType\":1," +
+                "\"operand\":\"string\"}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter5() throws Exception {
+
+        String jsonString = "{\"object\":100," +
+                "\"operator\":1," +
+                "\"operandType\":1," +
+                "\"operand\":10}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(2)))
+                .andExpect(jsonPath("$.info",is("找不到对象")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter6() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":2," +
+                "\"operand\":2}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(0)))
+                .andExpect(jsonPath("$.info",is("正常")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter7() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":2," +
+                "\"operand\":3}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(5)))
+                .andExpect(jsonPath("$.info",is("操作数对象类型与过滤条件对象不匹配")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter8() throws Exception {
+
+        String jsonString = "{\"object\":3," +
+                "\"operator\":1," +
+                "\"operandType\":2," +
+                "\"operand\":1}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(5)))
+                .andExpect(jsonPath("$.info",is("操作数对象类型与过滤条件对象不匹配")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter9() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":7," +
+                "\"operandType\":2," +
+                "\"operand\":[2,3]}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(5)))
+                .andExpect(jsonPath("$.info",is("操作数对象类型与过滤条件对象不匹配")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter10() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":7," +
+                "\"operandType\":2," +
+                "\"operand\":[\"2\",3]}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter11() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":2," +
+                "\"operand\":\"2\"}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(1)))
+                .andExpect(jsonPath("$.info",is("参数类型错误")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter12() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operator\":1," +
+                "\"operandType\":2}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
+    public void testSetFilter13() throws Exception {
+
+        String jsonString = "{\"object\":1," +
+                "\"operand\":\"2\"}";
+
+        String respStr0 = mockMvc.perform(post("/setFilter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.status",is(4)))
+                .andExpect(jsonPath("$.info",is("未找到对应参数")))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("testPost0.resp:"+respStr0);
+
+    }
+
+    @Test
     public void testSetPredefinedFilter0() throws Exception {
 
         String jsonString = "{\"filter\":1}";

@@ -41,6 +41,9 @@ public class FilterController {
 
     @RequestMapping(value = "/setFilter", method = RequestMethod.POST)
     public ReturnContent setFilter(@RequestBody Filter filter){
+        if (!filter.isAllFieldFilled()){
+            return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());
+        }
         Object objectEntity = objectRepository.findOne(filter.getObject());
         if (objectEntity == null) {
             return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
