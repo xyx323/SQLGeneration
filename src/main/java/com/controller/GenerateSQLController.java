@@ -3,6 +3,7 @@ package com.controller;
 import com.Application;
 import com.domain.Filter;
 import com.domain.Order;
+import com.domain.UserIntent;
 import com.entity.DataTable;
 import com.entity.DataField;
 import com.entity.Object;
@@ -93,6 +94,8 @@ public class GenerateSQLController {
         }
         if (oIDs.size() > 0 && validOIDNum > 0){
             selectClause = selectClause.substring(0, selectClause.length()-2) + " ";
+        } else {
+            selectClause = "";
         }
 
         // 填充过滤条件
@@ -148,6 +151,8 @@ public class GenerateSQLController {
         }
         if (relatedTables.size() > 0){
             fromClause = fromClause.substring(0, fromClause.length()-6) + " ";
+        }else{
+            fromClause = "";
         }
 
         // 填充排序标准
@@ -173,6 +178,9 @@ public class GenerateSQLController {
         }
 
         resultSQL = selectClause + fromClause + whereClause + orderClause + limitClause;
+
+        Application.userIntent = new UserIntent();
+
         return resultSQL;
     }
 
