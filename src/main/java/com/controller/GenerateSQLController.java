@@ -7,16 +7,12 @@ import com.domain.UserIntent;
 import com.entity.DataTable;
 import com.entity.DataField;
 import com.entity.Object;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -190,16 +186,15 @@ public class GenerateSQLController {
         if (o.getObject_type() == 1){
             DataField field = fieldRepository.findOne(Integer.parseInt(o.getRelated_field()));
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
-            if (!relatedTables.contains(dataTable.getTable_name())){
-                relatedTables.add(dataTable.getTable_name());
+            if (!relatedTables.contains(dataTable.getTableName())){
+                relatedTables.add(dataTable.getTableName());
             }
             // TODO: 没找到对应字段
-            return dataTable.getTable_name() + "." + field.getField_name();
+            return dataTable.getTableName() + "." + field.getField_name();
         }
         // 度量字段
         else if (o.getObject_type() == 2){
             return parseMeasureObject(o.getRelated_field());
-            // TODO: 解析失败
         }
         else{
             // TODO: object_type出错
@@ -208,7 +203,22 @@ public class GenerateSQLController {
     }
 
     private String parseMeasureObject(String measure){
-        // TODO: 解析度量对象的公式
+        String curWord = "";
+        for (int i = 0; i < measure.length(); i++){
+            if (Character.isLetterOrDigit(measure.charAt(i)) || measure.charAt(i) == '_'){
+                curWord += measure.charAt(i);
+            } else {
+                if (measure.charAt(i) == '.'){
+                    DataTable dataTable = dataTableRepository.findByTableName(curWord);
+                    if (dataTable != null){
+                        if (!(relatedTables.contains(curWord))){
+                            relatedTables.add(curWord);
+                        }
+                    }
+                }
+                curWord = "";
+            }
+        }
         return measure;
     }
 

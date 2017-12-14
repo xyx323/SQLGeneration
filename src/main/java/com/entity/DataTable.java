@@ -16,7 +16,8 @@ public class DataTable {
 
     private int df_id;
 
-    private String table_name;
+    @Column(name = "table_name")
+    private String tableName;
 
     private String table_description;
 
@@ -36,12 +37,12 @@ public class DataTable {
         this.df_id = df_id;
     }
 
-    public String getTable_name() {
-        return table_name;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setTable_name(String table_name) {
-        this.table_name = table_name;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public String getTable_description() {

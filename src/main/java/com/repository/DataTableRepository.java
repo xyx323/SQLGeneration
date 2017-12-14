@@ -11,4 +11,5 @@ import javax.persistence.Table;
 @Table(name="data_table")
 @Qualifier("dataTableRepository")
 public interface DataTableRepository extends CrudRepository<DataTable, Integer > {
+    DataTable findByTableName(String table_name);
 }
