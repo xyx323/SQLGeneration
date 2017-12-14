@@ -8,6 +8,7 @@ public enum ReturnContentEnum {
     SUCCESS(0,"正常"),
     PARAMETER_TYPE_ERROR(1,"参数类型错误"),
     OBJECT_NOT_FOUND(2,"找不到对象"),
+    QUERY_NOT_FOUND(2,"找不到子查询"),
     FILTER_NOT_FOUND(2,"找不到预过滤条件"),
     FILTER_EXISTED(3, "过滤条件已存在"),
     ORDER_EXISTED(3, "排序条件已存在"),

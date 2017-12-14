@@ -7,6 +7,7 @@ import com.domain.UserIntent;
 import com.entity.DataTable;
 import com.entity.DataField;
 import com.entity.Object;
+import com.entity.QueryStatement;
 import com.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,9 @@ public class GenerateSQLController {
 
     @Autowired
     private DataFoundationRepository dataFoundationRepository;
+
+    @Autowired
+    private QueryStatementRepository queryStatementRepository;
 
     @Autowired
     private FilterRepository filterRepository;
@@ -265,6 +269,19 @@ public class GenerateSQLController {
                         // TODO: 错误处理 类型不匹配
                         return null;
                     }
+                } else if (type == 3 || type == 4){
+                    if (boundries.get(0) instanceof Integer && boundries.get(1) instanceof Integer) {
+                        QueryStatement queryStatement1 = queryStatementRepository.findOne((int) boundries.get(0));
+                        QueryStatement queryStatement2 = queryStatementRepository.findOne((int) boundries.get(1));
+                        if (queryStatement1 == null || queryStatement2 == null){
+                            return null;
+                        }
+                        return fieldName + " " + operator + " ("
+                                + queryStatement1.getQs()+ ") AND (" + queryStatement2.getQs() + ")";
+                    } else {
+                        // TODO: 错误处理 类型不匹配
+                        return null;
+                    }
                 }
                 else {
                     // TODO: 处理其他类型的操作数
@@ -305,6 +322,20 @@ public class GenerateSQLController {
                         }
                         else {
                             candiStr = candiStr + oIDtoFieldName((int) candidate) + ", ";
+                        }
+                    }
+                }else if (type == 3 || type == 4){
+                    for (java.lang.Object candidate : candidates) {
+                        if (!(candidate instanceof Integer)) {
+                            // TODO: 错误处理 类型不匹配
+                            return null;
+                        }
+                        else {
+                            QueryStatement queryStatement1 = queryStatementRepository.findOne((int) candidate);
+                            if (queryStatement1 == null){
+                                continue;
+                            }
+                            candiStr = candiStr.concat(" (" + queryStatement1.getQs() + "), ");
                         }
                     }
                 }
@@ -362,6 +393,17 @@ public class GenerateSQLController {
                         subFilter = fieldName + " = " + oIDtoFieldName((int) value) + " OR ";
                         resultFilter += subFilter;
                     }
+                } else if (type == 3 || type == 4){
+                    for (java.lang.Object value : allValues) {
+                        String subFilter = "";
+                        if (!(value instanceof Integer)) {
+                            // TODO: 错误处理 类型不匹配
+                            return null;
+                        }
+                        QueryStatement queryStatement1 = queryStatementRepository.findOne((int) value);
+                        subFilter = fieldName + " = (" + queryStatement1.getQs() + ") OR ";
+                        resultFilter = resultFilter.concat(subFilter);
+                    }
                 }
                 else{
                     // TODO: 处理其他类型的操作数
@@ -390,6 +432,13 @@ public class GenerateSQLController {
                         return null;
                     }
                     return fieldName + " " + operator + " " + oIDtoFieldName((int) operand);
+                } else if (type == 3 || type == 4){
+                    if (!(operand instanceof Integer)) {
+                        // TODO: 错误处理 类型不匹配
+                        return null;
+                    }
+                    QueryStatement queryStatement1 = queryStatementRepository.findOne((int) operand);
+                    return fieldName + " " + operator + " (" + queryStatement1.getQs() + ")";
                 }
                 else{
                     // TODO: 处理其他类型的操作数

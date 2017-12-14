@@ -1,5 +1,7 @@
 package com.domain;
 
+import java.util.Objects;
+
 /**
  * Created by Bruinx on 2017/11/30.
  */
@@ -50,22 +52,17 @@ public class Filter {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Filter filter = (Filter) o;
-
-        if (object != null ? !object.equals(filter.object) : filter.object != null) return false;
-        if (operator != null ? !operator.equals(filter.operator) : filter.operator != null) return false;
-        if (operandType != null ? !operandType.equals(filter.operandType) : filter.operandType != null) return false;
-        return operand != null ? operand.equals(filter.operand) : filter.operand == null;
+        return Objects.equals(object, filter.object) &&
+                Objects.equals(operator, filter.operator) &&
+                Objects.equals(operandType, filter.operandType) &&
+                Objects.equals(operand, filter.operand);
     }
 
     @Override
     public int hashCode() {
-        int result = object != null ? object.hashCode() : 0;
-        result = 31 * result + (operator != null ? operator.hashCode() : 0);
-        result = 31 * result + (operandType != null ? operandType.hashCode() : 0);
-        result = 31 * result + (operand != null ? operand.hashCode() : 0);
-        return result;
+
+        return Objects.hash(object, operator, operandType, operand);
     }
 
     public boolean isAllFieldFilled() {

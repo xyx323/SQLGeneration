@@ -7,9 +7,11 @@ import com.domain.ReturnContentEnum;
 import com.entity.DataField;
 import com.entity.DataTable;
 import com.entity.Object;
+import com.entity.QueryStatement;
 import com.repository.DataFieldRepository;
 import com.repository.FilterRepository;
 import com.repository.ObjectRepository;
+import com.repository.QueryStatementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,9 @@ public class FilterController {
 
     @Autowired
     private DataFieldRepository dataFieldRepository;
+
+    @Autowired
+    private QueryStatementRepository queryStatementRepository;
 
     private List<String> dbNumberTypes = new ArrayList(Arrays.asList("TINYINT",  "SMALLINT", "MEDIUMINT", "INT", "INTEGER",
             "BIGINT", "FLOAT", "BIGINT", "FLOAT", "DOUBLE", "DECIMAL"));
@@ -120,6 +125,32 @@ public class FilterController {
                             ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
                 }
             }
+        } else if (filter.getOperandType() == 3 || filter.getOperandType() == 4){
+            // 当操作数的类型为子查询时判断操作数是否为整数，即子查询的id
+            if (filter.getOperand() instanceof List<?>) {
+                List<java.lang.Object> operands = (List<java.lang.Object>) filter.getOperand();
+                for (java.lang.Object o : operands) {
+                    if (!(o instanceof Integer)) {
+                        return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(),
+                                ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
+                    }
+                    QueryStatement qs = queryStatementRepository.findOne((int) o);
+                    if (qs == null){
+                        return new ReturnContent(ReturnContentEnum.QUERY_NOT_FOUND.getStatus(),
+                                ReturnContentEnum.QUERY_NOT_FOUND.getInfo());
+                    }
+                }
+            } else if (filter.getOperand() instanceof Integer) {
+                QueryStatement qs = queryStatementRepository.findOne((int) filter.getOperand());
+                if (qs == null) {
+                    return new ReturnContent(ReturnContentEnum.QUERY_NOT_FOUND.getStatus(),
+                            ReturnContentEnum.QUERY_NOT_FOUND.getInfo());
+                }
+            } else {
+                return new ReturnContent(ReturnContentEnum.PARAMETER_TYPE_ERROR.getStatus(),
+                        ReturnContentEnum.PARAMETER_TYPE_ERROR.getInfo());
+            }
+
         }
         if (!Application.userIntent.getFilterList().contains(filter)) {
             Application.userIntent.addFilter(filter);
