@@ -1,9 +1,7 @@
 package com.controller;
 
 import com.Application;
-import com.domain.Filter;
-import com.domain.Order;
-import com.domain.UserIntent;
+import com.domain.*;
 import com.entity.DataTable;
 import com.entity.DataField;
 import com.entity.Object;
@@ -15,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by Bruinx on 2017/11/30.
@@ -59,14 +55,14 @@ public class GenerateSQLController {
 //    }
 
     @RequestMapping(value = "/generateSQL", method = RequestMethod.GET)
-    public String generateSQL() {
+    public GenerateContent generateSQL() {
         relatedTables.clear();
         try {
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
             operatorProp.load(in);
         }
         catch (Exception e){
-            return "operator loading failed";
+            return new GenerateContent(ReturnContentEnum.LOAD_PROPERTIES_ERROR, "");
         }
 
         // 设置是否返回重复记录
@@ -181,7 +177,7 @@ public class GenerateSQLController {
 
         Application.userIntent = new UserIntent();
 
-        return resultSQL;
+        return new GenerateContent(ReturnContentEnum.SUCCESS, resultSQL);
     }
 
     private String oIDtoFieldName(int oID){
