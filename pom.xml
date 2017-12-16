@@ -4,8 +4,9 @@
 <modelVersion>4.0.0</modelVersion>
 
 <groupId>com.sqlg.testspring</groupId>
-<artifactId>testspring-demo</artifactId>
+<artifactId>sqlgeneration</artifactId>
 <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
