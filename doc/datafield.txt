@@ -1,0 +1,18 @@
+1	order_id	varchar	100	true	false
+1	order_no	varchar	100	false	false
+1	shop_id	varchar	100	false	false
+1	order_status	varchar	100	false	false
+1	product_count	varchar	100	false	false
+1	product_amount_total	varchar	100	true	false
+1	order_amount_total	varchar	100	true	false
+1	is_unpacking_inspection	varchar	100	true	false
+1	address_id	varchar	100	true	false
+1	orderlogistics_id	varchar	100	true	false
+2	invoice_id	varchar	100	true	false
+2	order_id	varchar	100	true	false
+2	is_vat	varchar	100	true	false
+2	invoice_amount	varchar	100	true	false
+2	invoice_tax	varchar	100	true	false
+2	created_time	varchar	100	true	false
+
+

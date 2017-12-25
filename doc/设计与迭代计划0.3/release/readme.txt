@@ -1,0 +1,2 @@
+classicmodels.sql为测试业务数据库sql文件。
+sql_generation_t1.sql为测试Universe数据库的sql文件。
