@@ -1,10 +1,5 @@
 package com.Tool;
 
-import com.entity.DataField;
-import com.entity.Object;
-import com.repository.DataFieldRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

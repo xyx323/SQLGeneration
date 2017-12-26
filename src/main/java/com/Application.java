@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 //@EntityScan(basePackages="com.entity")
 //@EnableJpaRepositories(basePackages="com.repository")
 @SpringBootApplication
-//@EnableConfigurationProperties({ConfigBean.class})
+//@EnableConfigurationProperties({DataSourceConfigBean.class})
 public class Application {
     public static UserIntent userIntent = new UserIntent();
     public static void main(String[] args) {
