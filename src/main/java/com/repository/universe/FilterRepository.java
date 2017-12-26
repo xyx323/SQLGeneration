@@ -1,6 +1,6 @@
-package com.repository;
+package com.repository.universe;
 
-import com.entity.Folder;
+import com.entity.universe.Filter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -8,12 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Table;
 
-/**
- * Created by Bruinx on 2017/12/2.
- */
 @Repository
-@Table(name = "folder")
-@Qualifier("folderRepository")
-@RepositoryRestResource(path="folder")
-public interface FolderRepository extends CrudRepository<Folder, Integer>{
+@Table(name="filter")
+@Qualifier("filterRepository")
+@RepositoryRestResource(path="filter")
+public interface FilterRepository extends CrudRepository<Filter, Integer> {
 }

@@ -2,11 +2,12 @@ package com.controller;
 
 import com.Tool.CommonTool;
 import com.domain.*;
-import com.entity.DataField;
-import com.entity.DataTable;
-import com.entity.Object;
-import com.entity.QueryStatement;
-import com.repository.*;
+import com.domain.Filter;
+import com.entity.universe.DataField;
+import com.entity.universe.DataTable;
+import com.entity.universe.*;
+import com.entity.universe.Object;
+import com.repository.universe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -103,7 +104,7 @@ public class GenetateSQLController {
     private ReturnContent checkObjects(List<Integer> objects){
             try {
                 for (int objectID : objects) {
-                    com.entity.Object objectEntity = objectRepository.findOne(objectID);
+                    Object objectEntity = objectRepository.findOne(objectID);
                     if (objectEntity == null) {
                         return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
                     }
@@ -332,7 +333,7 @@ public class GenetateSQLController {
         // 填充预过滤条件
         List<Integer> predefinedFilters = userIntent.getPredefinedFilters();
         for (int filterID : predefinedFilters){
-            com.entity.Filter preFilter = filterRepository.findOne(filterID);
+            com.entity.universe.Filter preFilter = filterRepository.findOne(filterID);
             String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数

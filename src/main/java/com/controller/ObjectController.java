@@ -3,7 +3,8 @@ package com.controller;
 import com.Application;
 import com.domain.ReturnContentEnum;
 import com.domain.ReturnContent;
-import com.repository.ObjectRepository;
+import com.entity.universe.Object;
+import com.repository.universe.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class ObjectController {
             objectIDs = (List<Integer>) params.get("objects");
             try {
                 for (int objectID : objectIDs) {
-                    com.entity.Object objectEntity = objectRepository.findOne(objectID);
+                    Object objectEntity = objectRepository.findOne(objectID);
                     if (objectEntity != null) {
                         if (!Application.userIntent.getObjects().contains(objectID)) {
                             Application.userIntent.addObjectID(objectID);

@@ -1,5 +1,8 @@
 package com.controller;
 
+import com.BusinessConfig;
+import com.DataSourceConfigBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,11 +61,14 @@ public class testController {
 //        this.driverClassName = driverClassName;
 //    }
 //    @Autowired
-//    ConfigBean configBean;
-//
+////    BusinessConfig businessConfig;
+//    DataSourceConfigBean configBean;
+////
 //    @RequestMapping("test")
 //    public String hexo(){
-//        configBean.setUrl("testttt");
-//        return configBean.getUrl();
+////        BasicDataSource basicDS = (BasicDataSource) appcxt.getBean("dataSource");
+////        configBean.universeDataSource();
+////        businessConfig.setUrl("testtesttest");
+////        return businessConfig.getUrl();
 //    }
 }

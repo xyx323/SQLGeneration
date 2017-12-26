@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  * Created by Bruinx on 2017/12/26.
  */
 //@ConfigurationProperties(prefix = "spring.datasource.businessDB")
-//public class ConfigBean {
+//public class DataSourceConfigBean {
 //
 //    private String url;
 //
@@ -59,7 +59,7 @@ import javax.sql.DataSource;
 //    }
 //}
 @Configuration
-public class ConfigBean {
+public class DataSourceConfigBean {
 
     @Bean(name = "universeDataSource")
     @Qualifier("universeDataSource")
