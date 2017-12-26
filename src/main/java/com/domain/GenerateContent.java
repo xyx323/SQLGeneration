@@ -7,6 +7,9 @@ public class GenerateContent {
 
     private String SQL;
 
+    public GenerateContent() {
+    }
+
     public GenerateContent(int status, String info, String SQL) {
         this.status = status;
         this.info = info;
@@ -16,6 +19,12 @@ public class GenerateContent {
     public GenerateContent(ReturnContentEnum returnContentEnum, String SQL) {
         this.status = returnContentEnum.getStatus();
         this.info = returnContentEnum.getInfo();
+        this.SQL = SQL;
+    }
+
+    public GenerateContent(ReturnContent returnContent, String SQL) {
+        this.status = returnContent.getStatus();
+        this.info = returnContent.getInfo();
         this.SQL = SQL;
     }
 

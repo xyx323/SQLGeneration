@@ -5,7 +5,6 @@ import com.domain.Filter;
 import com.domain.ReturnContent;
 import com.domain.ReturnContentEnum;
 import com.entity.DataField;
-import com.entity.DataTable;
 import com.entity.Object;
 import com.entity.QueryStatement;
 import com.repository.DataFieldRepository;
@@ -13,7 +12,6 @@ import com.repository.FilterRepository;
 import com.repository.ObjectRepository;
 import com.repository.QueryStatementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -152,7 +150,7 @@ public class FilterController {
             }
 
         }
-        if (!Application.userIntent.getFilterList().contains(filter)) {
+        if (!Application.userIntent.getFilters().contains(filter)) {
             Application.userIntent.addFilter(filter);
         } else {
             return new ReturnContent(ReturnContentEnum.FILTER_EXISTED.getStatus(), ReturnContentEnum.FILTER_EXISTED.getInfo());
@@ -171,7 +169,7 @@ public class FilterController {
             if (filterRepository.findOne(filterID) == null){
                 return new ReturnContent(ReturnContentEnum.FILTER_NOT_FOUND.getStatus(), ReturnContentEnum.FILTER_NOT_FOUND.getInfo());
             }
-            if (!Application.userIntent.getPredefinedFilterIds().contains(filterID)) {
+            if (!Application.userIntent.getPredefinedFilters().contains(filterID)) {
                 Application.userIntent.addPredefinedFilter(filterID);
             } else {
                 return new ReturnContent(ReturnContentEnum.FILTER_EXISTED.getStatus(), ReturnContentEnum.FILTER_EXISTED.getInfo());

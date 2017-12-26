@@ -8,9 +8,17 @@ public class ReturnContent {
 
     private String info;
 
+    public ReturnContent() {
+    }
+
     public ReturnContent(int status, String info) {
         this.status = status;
         this.info = info;
+    }
+
+    public ReturnContent(ReturnContentEnum returnContentEnum) {
+        this.status = returnContentEnum.getStatus();
+        this.info = returnContentEnum.getInfo();
     }
 
     public int getStatus() {

@@ -19,7 +19,7 @@ import java.util.*;
  * Created by Bruinx on 2017/11/30.
  */
 @RestController
-public class GenerateSQLController {
+public class GenerateSQLByStepController {
     @Autowired
     private ObjectRepository objectRepository;
 
@@ -54,8 +54,8 @@ public class GenerateSQLController {
 //        }
 //    }
 
-    @RequestMapping(value = "/generateSQL", method = RequestMethod.GET)
-    public GenerateContent generateSQL() {
+    @RequestMapping(value = "/generateSQLByStep", method = RequestMethod.GET)
+    public GenerateContent generateSQLByStep() {
         relatedTables.clear();
         try {
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
@@ -75,7 +75,7 @@ public class GenerateSQLController {
         }
 
         // 填充查询字段
-        List<Integer> oIDs = Application.userIntent.getObjectsIDs();
+        List<Integer> oIDs = Application.userIntent.getObjects();
         int validOIDNum = 0;
         for (int oID : oIDs) {
             String fieldName = oIDtoFieldName(oID);
@@ -97,7 +97,7 @@ public class GenerateSQLController {
         // 填充过滤条件
         String whereClause = "WHERE ";
         int validFilterNum = 0;
-        List<Filter> filters = Application.userIntent.getFilterList();
+        List<Filter> filters = Application.userIntent.getFilters();
         for (Filter filter : filters) {
 //            String fieldName = oIDtoFieldName(filter.getObject());
 //            String operator = getOperator(filter.getOperator());
@@ -118,7 +118,7 @@ public class GenerateSQLController {
         }
 
         // 填充预过滤条件
-        List<Integer> predefinedFilters = Application.userIntent.getPredefinedFilterIds();
+        List<Integer> predefinedFilters = Application.userIntent.getPredefinedFilters();
         for (int filterID : predefinedFilters){
             com.entity.Filter preFilter = filterRepository.findOne(filterID);
             String fieldName = oIDtoFieldName(preFilter.getObject_id());

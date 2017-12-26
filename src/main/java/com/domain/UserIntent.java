@@ -8,11 +8,11 @@ import java.util.List;
  */
 public class UserIntent {
 
-    private List<Integer> objectsIDs;
+    private List<Integer> objects;
     //查询的对象Id列表
-    private List<Filter> filterList;
+    private List<Filter> filters;
     //过滤条件列表
-    private List<Integer> predefinedFilterIds;
+    private List<Integer> predefinedFilters;
     //预过滤条件列表
     private List<Order> orders;
     //排序规则列表
@@ -23,36 +23,36 @@ public class UserIntent {
 
 
     public UserIntent() {
-        objectsIDs = new ArrayList<>();
-        filterList = new ArrayList<>();
-        predefinedFilterIds = new ArrayList<>();
+        objects = new ArrayList<>();
+        filters = new ArrayList<>();
+        predefinedFilters = new ArrayList<>();
         orders = new ArrayList<>();
         distinct = Boolean.FALSE;
         returnNumber = -1;
     }
 
-    public List<Integer> getObjectsIDs() {
-        return objectsIDs;
+    public List<Integer> getObjects() {
+        return objects;
     }
 
-    public void setObjectsIDs(List<Integer> objectsIDs) {
-        this.objectsIDs = objectsIDs;
+    public void setObjects(List<Integer> objects) {
+        this.objects = objects;
     }
 
-    public List<Filter> getFilterList() {
-        return filterList;
+    public List<Filter> getFilters() {
+        return filters;
     }
 
-    public void setFilterList(List<Filter> filterList) {
-        this.filterList = filterList;
+    public void setFilters(List<Filter> filters) {
+        this.filters = filters;
     }
 
-    public List<Integer> getPredefinedFilterIds() {
-        return predefinedFilterIds;
+    public List<Integer> getPredefinedFilters() {
+        return predefinedFilters;
     }
 
-    public void setPredefinedFilterIds(List<Integer> predefinedFilterIds) {
-        this.predefinedFilterIds = predefinedFilterIds;
+    public void setPredefinedFilters(List<Integer> predefinedFilters) {
+        this.predefinedFilters = predefinedFilters;
     }
 
     public List<Order> getOrders() {
@@ -80,15 +80,15 @@ public class UserIntent {
     }
 
     public void addObjectID(int objectID){
-        objectsIDs.add(objectID);
+        objects.add(objectID);
     }
 
     public void addFilter(Filter filter){
-        filterList.add(filter);
+        filters.add(filter);
     }
 
     public void addPredefinedFilter(int predefinedFilterID){
-        predefinedFilterIds.add(predefinedFilterID);
+        predefinedFilters.add(predefinedFilterID);
     }
 
     public void addOrder(Order order){
