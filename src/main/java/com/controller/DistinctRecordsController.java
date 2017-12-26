@@ -17,7 +17,7 @@ import java.util.Map;
 public class DistinctRecordsController {
 
     @RequestMapping(value = "/setDistinctRecords", method = RequestMethod.POST)
-    public ReturnContent setFilter(@RequestBody Map<String, Object> distinctRecord){
+    public ReturnContent setDistinctRecords(@RequestBody Map<String, Object> distinctRecord){
         try {
             if (distinctRecord.get("distinct") == null) {
                 return new ReturnContent(ReturnContentEnum.PARAMETER_NOT_FOUND.getStatus(), ReturnContentEnum.PARAMETER_NOT_FOUND.getInfo());

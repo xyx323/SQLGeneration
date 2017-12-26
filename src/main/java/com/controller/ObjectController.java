@@ -31,7 +31,7 @@ public class ObjectController {
                 for (int objectID : objectIDs) {
                     com.entity.Object objectEntity = objectRepository.findOne(objectID);
                     if (objectEntity != null) {
-                        if (!Application.userIntent.getObjectsIDs().contains(objectID)) {
+                        if (!Application.userIntent.getObjects().contains(objectID)) {
                             Application.userIntent.addObjectID(objectID);
                         }
                     } else {
