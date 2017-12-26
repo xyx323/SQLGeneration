@@ -65,9 +65,9 @@ public class GenetateSQLController {
             return new GenerateContent(returnContent, "");
         }
 
-        // setFilters
-        if (userIntent.getFilters() != null) {
-            returnContent = checkFilters(userIntent.getFilters());
+        // setAllFilters
+        if (userIntent.getAllFilters() != null) {
+            returnContent = checkFilters(userIntent.getAllFilters());
 
             if (returnContent.getStatus() != ReturnContentEnum.SUCCESS.getStatus()){
                 return new GenerateContent(returnContent, "");
@@ -307,50 +307,58 @@ public class GenetateSQLController {
         }
 
         // 填充过滤条件
-        String whereClause = "WHERE ";
-        int validFilterNum = 0;
-        List<Filter> filters = userIntent.getFilters();
-        for (Filter filter : filters) {
-//            String fieldName = oIDtoFieldName(filter.getObject());
-//            String operator = getFilterStatement(filter.getFilterStatement());
+        String whereClause = "";
+        if (userIntent.getFilter() != null){
+            String filterStatement = parseFilter(userIntent.getFilter(), relatedTables);
+            if (filterStatement == null){
+                return new GenerateContent(ReturnContentEnum.PARSE_FILTER_ERROR, "");
+            }
+            whereClause = "WHERE " + parseFilter(userIntent.getFilter(), relatedTables) + " ";
+        }
+//        String whereClause = "WHERE ";
+//        int validFilterNum = 0;
+//        List<Filter> filters = userIntent.getAllFilters();
+//        for (Filter filter : filters) {
+////            String fieldName = oIDtoFieldName(filter.getObject());
+////            String operator = getFilterStatement(filter.getFilterStatement());
+////            // TODO: 处理不同类型的操作数
+////            String operand = (String)filter.getOperand();
+////            if (fieldName != null && operator != null && operand != null) {
+////                resultSQL = resultSQL + fieldName + " " + operator + " "
+////                        + operand + " AND ";
+////            } else {
+////                // TODO: 错误处理
+////                continue;
+////            }
+//            String filterStr = getFilterStatement(filter, relatedTables);
+//            if (filterStr != null){
+//                whereClause = whereClause + filterStr + " AND ";
+//                validFilterNum ++;
+//            }
+//        }
+//
+//        // 填充预过滤条件
+//        List<Integer> predefinedFilters = userIntent.getPredefinedFilters();
+//        for (int filterID : predefinedFilters){
+//            com.entity.Filter preFilter = filterRepository.findOne(filterID);
+//            String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
+//            String operator = getOperator(preFilter.getOperator());
 //            // TODO: 处理不同类型的操作数
-//            String operand = (String)filter.getOperand();
+//            String operand = preFilter.getOperands();
 //            if (fieldName != null && operator != null && operand != null) {
-//                resultSQL = resultSQL + fieldName + " " + operator + " "
+//                whereClause = whereClause + fieldName + " " + operator + " "
 //                        + operand + " AND ";
+//                validFilterNum ++;
 //            } else {
 //                // TODO: 错误处理
 //                continue;
 //            }
-            String filterStr = getFilterStatement(filter, relatedTables);
-            if (filterStr != null){
-                whereClause = whereClause + filterStr + " AND ";
-                validFilterNum ++;
-            }
-        }
-
-        // 填充预过滤条件
-        List<Integer> predefinedFilters = userIntent.getPredefinedFilters();
-        for (int filterID : predefinedFilters){
-            com.entity.Filter preFilter = filterRepository.findOne(filterID);
-            String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
-            String operator = getOperator(preFilter.getOperator());
-            // TODO: 处理不同类型的操作数
-            String operand = preFilter.getOperands();
-            if (fieldName != null && operator != null && operand != null) {
-                whereClause = whereClause + fieldName + " " + operator + " "
-                        + operand + " AND ";
-                validFilterNum ++;
-            } else {
-                // TODO: 错误处理
-                continue;
-            }
-        }
-        if (filters.size() + predefinedFilters.size() > 0 && validFilterNum > 0){
-            whereClause = whereClause.substring(0, whereClause.length() - 4);
-        }else {
-            whereClause = "";
-        }
+//        }
+//        if (filters.size() + predefinedFilters.size() > 0 && validFilterNum > 0){
+//            whereClause = whereClause.substring(0, whereClause.length() - 4);
+//        }else {
+//            whereClause = "";
+//        }
 
         // 填充from子句
         String fromClause = "FROM ";
@@ -653,5 +661,57 @@ public class GenetateSQLController {
                     return null;
                 }
         }
+    }
+
+    private String parseFilter(Filter filter, List<String> relatedTables){
+        if (filter.getFilterType() == null){
+            return null;
+        }
+        if (filter.getFilterType() == 2){
+            return getFilterStatement(filter, relatedTables);
+        } else if (filter.getFilterType() == 3){
+            if (filter.getPredefinedFilterID() == null){
+                return null;
+            }
+            com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
+            String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
+            String operator = getOperator(preFilter.getOperator());
+            // TODO: 处理不同类型的操作数
+            String operand = preFilter.getOperands();
+            if (fieldName != null && operator != null && operand != null) {
+                return fieldName + " " + operator + " " + operand;
+            } else {
+                return null;
+            }
+        }
+        if (filter.getChildren() == null || filter.getChildren().isEmpty()) {
+            return null;
+        }
+        if (filter.getLogicOperators().size() != filter.getChildren().size() - 1){
+            return null;
+        }
+        String result = "";
+        List<String> childStatements = new ArrayList<>();
+        for (Filter child : filter.getChildren()){
+            String childStatement = parseFilter(child, relatedTables);
+            if (childStatement == null){
+                return null;
+            }
+            childStatements.add(childStatement);
+        }
+        List<Integer> logicOperators = filter.getLogicOperators();
+        for (int i = 0; i < logicOperators.size(); i++){
+            String operator;
+            if (logicOperators.get(i) == 1){
+                operator = " AND ";
+            }else if (logicOperators.get(i) == 2){
+                operator = " OR ";
+            } else {
+                return null;
+            }
+            result = result.concat(childStatements.get(i)).concat(operator);
+        }
+        result = result.concat(childStatements.get(childStatements.size() - 1));
+        return "(" + result + ")";
     }
 }

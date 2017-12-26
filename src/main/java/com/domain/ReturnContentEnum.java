@@ -14,7 +14,8 @@ public enum ReturnContentEnum {
     ORDER_EXISTED(3, "排序条件已存在"),
     PARAMETER_NOT_FOUND(4, "未找到对应参数"),
     OPERAND_OBJECT_TYPE_ERROR(5,"操作数对象类型与过滤条件对象不匹配"),
-    LOAD_PROPERTIES_ERROR(6,"配置文件加载失败");
+    LOAD_PROPERTIES_ERROR(6,"配置文件加载失败"),
+    PARSE_FILTER_ERROR(7,"过滤条件解析失败");
 
     private ReturnContentEnum(Integer status, String info){
         this.status = status;

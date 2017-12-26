@@ -10,8 +10,10 @@ public class UserIntent {
 
     private List<Integer> objects;
     //查询的对象Id列表
-    private List<Filter> filters;
+    private List<Filter> allFilters;
     //过滤条件列表
+    private Filter filter;
+    //应用于本意图的过滤条件
     private List<Integer> predefinedFilters;
     //预过滤条件列表
     private List<Order> orders;
@@ -24,7 +26,7 @@ public class UserIntent {
 
     public UserIntent() {
         objects = new ArrayList<>();
-        filters = new ArrayList<>();
+        allFilters = new ArrayList<>();
         predefinedFilters = new ArrayList<>();
         orders = new ArrayList<>();
         distinct = Boolean.FALSE;
@@ -39,12 +41,12 @@ public class UserIntent {
         this.objects = objects;
     }
 
-    public List<Filter> getFilters() {
-        return filters;
+    public List<Filter> getAllFilters() {
+        return allFilters;
     }
 
-    public void setFilters(List<Filter> filters) {
-        this.filters = filters;
+    public void setAllFilters(List<Filter> allFilters) {
+        this.allFilters = allFilters;
     }
 
     public List<Integer> getPredefinedFilters() {
@@ -79,12 +81,20 @@ public class UserIntent {
         this.returnNumber = returnNumber;
     }
 
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
     public void addObjectID(int objectID){
         objects.add(objectID);
     }
 
     public void addFilter(Filter filter){
-        filters.add(filter);
+        allFilters.add(filter);
     }
 
     public void addPredefinedFilter(int predefinedFilterID){

@@ -97,7 +97,7 @@ public class GenerateSQLByStepController {
         // 填充过滤条件
         String whereClause = "WHERE ";
         int validFilterNum = 0;
-        List<Filter> filters = Application.userIntent.getFilters();
+        List<Filter> filters = Application.userIntent.getAllFilters();
         for (Filter filter : filters) {
 //            String fieldName = oIDtoFieldName(filter.getObject());
 //            String operator = getOperator(filter.getOperator());

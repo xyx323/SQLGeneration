@@ -1,11 +1,18 @@
 package com.domain;
 
-import java.util.Objects;
+import java.util.List;
 
 /**
  * Created by Bruinx on 2017/11/30.
  */
 public class Filter {
+    private Integer filterType; // 1: parent, 2: child Filter, 3: child predefined filter
+
+    private Integer predefinedFilterID;
+
+    private List<Filter> children;
+
+    private List<Integer> logicOperators; // 1: and, 2: or
 
     private Integer object;
     //过滤条件涉及的对象ID
@@ -48,21 +55,37 @@ public class Filter {
         this.operand = operand;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Filter filter = (Filter) o;
-        return Objects.equals(object, filter.object) &&
-                Objects.equals(operator, filter.operator) &&
-                Objects.equals(operandType, filter.operandType) &&
-                Objects.equals(operand, filter.operand);
+    public Integer getFilterType() {
+        return filterType;
     }
 
-    @Override
-    public int hashCode() {
+    public void setFilterType(Integer filterType) {
+        this.filterType = filterType;
+    }
 
-        return Objects.hash(object, operator, operandType, operand);
+    public List<Filter> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Filter> children) {
+        this.children = children;
+    }
+
+    public List<Integer> getLogicOperators() {
+        return logicOperators;
+    }
+
+    public void setLogicOperators(List<Integer> logicOperators) {
+        this.logicOperators = logicOperators;
+    }
+
+    public Integer getPredefinedFilterID() {
+
+        return predefinedFilterID;
+    }
+
+    public void setPredefinedFilterID(Integer predefinedFilterID) {
+        this.predefinedFilterID = predefinedFilterID;
     }
 
     public boolean isAllFieldFilled() {
