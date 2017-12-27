@@ -104,7 +104,7 @@ public class GenetateSQLController {
     private ReturnContent checkObjects(List<Integer> objects){
             try {
                 for (int objectID : objects) {
-                    com.entity.Object objectEntity = objectRepository.findOne(objectID);
+                    com.entity.universe.Object objectEntity = objectRepository.findOne(objectID);
                     if (objectEntity == null) {
                         return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
                     }
@@ -674,7 +674,7 @@ public class GenetateSQLController {
             if (filter.getPredefinedFilterID() == null){
                 return null;
             }
-            com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
+            com.entity.universe.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
             String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
