@@ -3,10 +3,11 @@ package com.controller;
 import com.Tool.CommonTool;
 import com.domain.*;
 import com.domain.Filter;
-import com.entity.universe.DataField;
-import com.entity.universe.DataTable;
-import com.entity.universe.*;
-import com.entity.universe.Object;
+import com.entity.DataField;
+import com.entity.DataTable;
+import com.entity.QueryStatement;
+import com.entity.Universe.*;
+import com.entity.Object;
 import com.repository.universe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,7 +105,7 @@ public class GenetateSQLController {
     private ReturnContent checkObjects(List<Integer> objects){
             try {
                 for (int objectID : objects) {
-                    com.entity.universe.Object objectEntity = objectRepository.findOne(objectID);
+                    Object objectEntity = objectRepository.findOne(objectID);
                     if (objectEntity == null) {
                         return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
                     }
@@ -259,7 +260,7 @@ public class GenetateSQLController {
     private String findObjectFieldType(Object object){
         // 属性字段
         if (object.getObject_type() == 1){
-            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getRelated_field()));
+            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getSql_text()));
             return field.getField_type();
         }
         else{
@@ -420,7 +421,7 @@ public class GenetateSQLController {
         Object o = objectRepository.findOne(oID);
         // 属性字段
         if (o.getObject_type() == 1){
-            DataField field = fieldRepository.findOne(Integer.parseInt(o.getRelated_field()));
+            DataField field = fieldRepository.findOne(Integer.parseInt(o.getSql_text()));
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
             if (!relatedTables.contains(dataTable.getTableName())){
                 relatedTables.add(dataTable.getTableName());
@@ -430,7 +431,7 @@ public class GenetateSQLController {
         }
         // 度量字段
         else if (o.getObject_type() == 2){
-            return parseMeasureObject(o.getRelated_field(), relatedTables);
+            return parseMeasureObject(o.getSql_text(), relatedTables);
         }
         else{
             // TODO: object_type出错
@@ -689,7 +690,7 @@ public class GenetateSQLController {
             if (filter.getPredefinedFilterID() == null){
                 return null;
             }
-            com.entity.universe.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
+            com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
             String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数

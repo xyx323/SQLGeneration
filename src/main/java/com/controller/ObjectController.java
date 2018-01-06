@@ -3,7 +3,7 @@ package com.controller;
 import com.Application;
 import com.domain.ReturnContentEnum;
 import com.domain.ReturnContent;
-import com.entity.universe.Object;
+import com.entity.Object;
 import com.repository.universe.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

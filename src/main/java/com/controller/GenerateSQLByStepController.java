@@ -3,10 +3,10 @@ package com.controller;
 import com.Application;
 import com.domain.*;
 import com.domain.Filter;
-import com.entity.universe.DataTable;
-import com.entity.universe.DataField;
-import com.entity.universe.Object;
-import com.entity.universe.QueryStatement;
+import com.entity.DataTable;
+import com.entity.DataField;
+import com.entity.Object;
+import com.entity.QueryStatement;
 import com.repository.universe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -121,7 +121,7 @@ public class GenerateSQLByStepController {
         // 填充预过滤条件
         List<Integer> predefinedFilters = Application.userIntent.getPredefinedFilters();
         for (int filterID : predefinedFilters){
-            com.entity.universe.Filter preFilter = filterRepository.findOne(filterID);
+            com.entity.Filter preFilter = filterRepository.findOne(filterID);
             String fieldName = oIDtoFieldName(preFilter.getObject_id());
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
@@ -185,7 +185,7 @@ public class GenerateSQLByStepController {
         Object o = objectRepository.findOne(oID);
         // 属性字段
         if (o.getObject_type() == 1){
-            DataField field = fieldRepository.findOne(Integer.parseInt(o.getRelated_field()));
+            DataField field = fieldRepository.findOne(Integer.parseInt(o.getSql_text()));
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
             if (!relatedTables.contains(dataTable.getTableName())){
                 relatedTables.add(dataTable.getTableName());
@@ -195,7 +195,7 @@ public class GenerateSQLByStepController {
         }
         // 度量字段
         else if (o.getObject_type() == 2){
-            return parseMeasureObject(o.getRelated_field());
+            return parseMeasureObject(o.getSql_text());
         }
         else{
             // TODO: object_type出错
@@ -447,7 +447,7 @@ public class GenerateSQLByStepController {
 //    private String getPredefinedFilter(int filterID){
 //        Gson gson = new Gson();
 //
-//        com.entity.universe.Filter preFilter = filterRepository.findOne(filterID);
+//        Filter preFilter = filterRepository.findOne(filterID);
 //        String fieldName = oIDtoFieldName(preFilter.getObject_id());
 //        String operator = operatorProp.getProperty(String.valueOf(preFilter.getOperator()));
 //        if (operator == null){

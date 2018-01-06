@@ -4,9 +4,9 @@ import com.Application;
 import com.domain.Filter;
 import com.domain.ReturnContent;
 import com.domain.ReturnContentEnum;
-import com.entity.universe.DataField;
-import com.entity.universe.Object;
-import com.entity.universe.QueryStatement;
+import com.entity.DataField;
+import com.entity.Object;
+import com.entity.QueryStatement;
 import com.repository.universe.DataFieldRepository;
 import com.repository.universe.FilterRepository;
 import com.repository.universe.ObjectRepository;
@@ -184,7 +184,7 @@ public class FilterController {
     private String findObjectFieldType(Object object){
         // 属性字段
         if (object.getObject_type() == 1){
-            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getRelated_field()));
+            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getSql_text()));
             return field.getField_type();
         }
         else{

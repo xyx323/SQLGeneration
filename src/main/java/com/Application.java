@@ -13,12 +13,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-//@Configuration
-//@ComponentScan(basePackages="com")
-//@EnableAutoConfiguration
-//@EntityScan(basePackages="com.entity")
-//@EnableJpaRepositories(basePackages="com.repository")
-@SpringBootApplication
+@Configuration
+@ComponentScan(basePackages="com")
+@EnableAutoConfiguration
+@EntityScan(basePackages="com.entity")
+@EnableJpaRepositories(basePackages="com.repository")
+//设置多个数据源时使用只使用这一行@SpringBootApplication
 //@EnableConfigurationProperties({DataSourceConfigBean.class})
 public class Application {
     public static UserIntent userIntent = new UserIntent();

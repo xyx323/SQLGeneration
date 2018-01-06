@@ -1,6 +1,6 @@
 package com.repository.universe;
 
-import com.entity.universe.Object;
+import com.entity.Object;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;

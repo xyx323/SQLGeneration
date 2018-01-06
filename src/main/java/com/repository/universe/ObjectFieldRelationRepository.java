@@ -1,7 +1,6 @@
 package com.repository.universe;
 
-import com.entity.universe.Object;
-import com.entity.universe.ObjectFieldRelation;
+import com.entity.ObjectFieldRelation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
