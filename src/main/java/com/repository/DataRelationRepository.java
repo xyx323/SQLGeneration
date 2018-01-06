@@ -1,6 +1,6 @@
-package com.repository.universe;
+package com.repository;
 
-import com.entity.Universe;
+import com.entity.DataRelation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -12,10 +12,8 @@ import javax.persistence.Table;
  * Created by Bruinx on 2017/12/2.
  */
 @Repository
-@Table(name = "universe")
-@Qualifier("universeRepository")
-@RepositoryRestResource(path="universe")
-public interface UniverseRepository extends CrudRepository<Universe, Integer> {
+@Table(name = "data_relation")
+@Qualifier("dataRelationRepository")
+@RepositoryRestResource(path="dataRelation")
+public interface DataRelationRepository extends CrudRepository<DataRelation, Integer > {
 }
-
-

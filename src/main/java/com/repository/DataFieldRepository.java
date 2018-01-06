@@ -1,4 +1,4 @@
-package com.repository.universe;
+package com.repository;
 
 import com.entity.DataField;
 import org.springframework.beans.factory.annotation.Qualifier;
