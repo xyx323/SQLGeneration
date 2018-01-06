@@ -10,17 +10,27 @@ import javax.persistence.*;
 public class Object {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
+
+    @Column(name = "object_id")
     private int object_id;
 
+    @Column(name = "folder_id")
     private int folder_id;
 
+    @Column(name = "object_name")
     private String object_name;
 
+    @Column(name = "object_description")
     private String object_description;
 
+    @Column(name = "object_type")
     private int object_type;
 
-    private String related_field;
+    @Column(name = "cal_type")
+    private int cal_type;
+
+    @Column(name = "sql_text")
+    private String sql_text;
 
     //@Column(name="object_id")
     public int getObject_id() {
@@ -63,11 +73,19 @@ public class Object {
         this.object_type = object_type;
     }
 
-    public String getRelated_field() {
-        return related_field;
+    public int getCal_type() {
+        return cal_type;
     }
 
-    public void setRelated_field(String related_field) {
-        this.related_field = related_field;
+    public void setCal_type(int cal_type) {
+        this.cal_type = cal_type;
     }
-}
+
+    public String getSql_text() {
+        return sql_text;
+    }
+
+    public void setSql_text(String sql_text) {
+        this.sql_text = sql_text;
+    }
+   }

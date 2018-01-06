@@ -10,33 +10,48 @@ import javax.persistence.*;
 public class DataRelation {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer data_relation_id;
 
-    private Integer table1_id;
+    @Column(name = "data_relation_id")
+    private int data_relation_id;
 
-    private Integer table2_id;
+    @Column(name = "field1_id")
+    private int field1_id;
 
-    public Integer getData_relation_id() {
+    @Column(name = "field2_id")
+    private int field2_id;
+
+    @Column(name = "data_relation_mode")
+    private int data_relation_mode;
+
+    public int getData_relation_id() {
         return data_relation_id;
     }
 
-    public void setData_relation_id(Integer data_relation_id) {
+    public void setData_relation_id(int data_relation_id) {
         this.data_relation_id = data_relation_id;
     }
 
-    public Integer getTable1_id() {
-        return table1_id;
+    public int getField1_id() {
+        return field1_id;
     }
 
-    public void setTable1_id(Integer table1_id) {
-        this.table1_id = table1_id;
+    public void setField1_id(int field1_id) {
+        this.field1_id = field1_id;
     }
 
-    public Integer getTable2_id() {
-        return table2_id;
+    public int getField2_id() {
+        return field2_id;
     }
 
-    public void setTable2_id(Integer table2_id) {
-        this.table2_id = table2_id;
+    public void setField2_id(int field2_id) {
+        this.field2_id = field2_id;
+    }
+
+    public int getData_relation_mode() {
+        return data_relation_mode;
+    }
+
+    public void setData_relation_mode(int data_relation_mode) {
+        this.data_relation_mode = data_relation_mode;
     }
 }
