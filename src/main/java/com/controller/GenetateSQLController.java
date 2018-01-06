@@ -270,6 +270,7 @@ public class GenetateSQLController {
 
     private GenerateContent generateSQLfromUserIntent(UserIntent userIntent) {
         List<String> relatedTables = new ArrayList<>();
+        List<String> groupByObjects = new ArrayList<>();
         try {
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
             operatorProp.load(in);
@@ -291,7 +292,11 @@ public class GenetateSQLController {
         List<Integer> oIDs = userIntent.getObjects();
         int validOIDNum = 0;
         for (int oID : oIDs) {
+            Object o = objectRepository.findOne(oID);
             String fieldName = oIDtoFieldName(oID, relatedTables);
+            if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
+                groupByObjects.add(fieldName);
+            }
             if (fieldName != null) {
                 validOIDNum ++;
                 selectClause += fieldName;
@@ -372,6 +377,16 @@ public class GenetateSQLController {
             fromClause = "";
         }
 
+        // 填充GROUP BY子句
+        String groupByClause = "";
+        if (groupByObjects.size() != 0 && groupByObjects.size() < userIntent.getObjects().size()){
+            groupByClause = "GROUP BY ";
+            for (String attribute : groupByObjects){
+                groupByClause = groupByClause.concat(attribute).concat(", ");
+            }
+            groupByClause = groupByClause.substring(0, groupByClause.length()-2) + " ";
+        }
+
         // 填充排序标准
         String orderClause = "";
         List<Order> orders = userIntent.getOrders();
@@ -394,7 +409,7 @@ public class GenetateSQLController {
             limitClause = limitClause + "LIMIT 0, " + userIntent.getReturnNumber();
         }
 
-        resultSQL = selectClause + fromClause + whereClause + orderClause + limitClause;
+        resultSQL = selectClause + fromClause + whereClause + groupByClause + orderClause + limitClause;
 
         userIntent = new UserIntent();
 
