@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,9 @@ public class GenetateSQLController {
 
     @Autowired
     private DataFieldRepository dataFieldRepository;
+
+    @Autowired
+    private DataRelationRepository dataRelationRepository;
 
     @Autowired
     private ObjectFieldRelationRepository objectFieldRelationRepository;
@@ -106,7 +110,7 @@ public class GenetateSQLController {
 
         //checkReturnNumber -- no need
 
-        return generateSQLfromUserIntent(userIntent);
+        return generateSQLFromUserIntent(userIntent);
     }
 
     private ReturnContent checkObjects(List<Integer> objects){
@@ -280,8 +284,8 @@ public class GenetateSQLController {
         }
     }
 
-    private GenerateContent generateSQLfromUserIntent(UserIntent userIntent) {
-        List<String> relatedTables = new ArrayList<>();
+    private GenerateContent generateSQLFromUserIntent(UserIntent userIntent) {
+        List<DataTable> relatedTables = new ArrayList<>();
         List<String> groupByObjects = new ArrayList<>();
 //        try {
 //            InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
@@ -337,13 +341,61 @@ public class GenetateSQLController {
 
         // 填充from子句
         String fromClause = "FROM ";
-        for (String table : relatedTables) {
-            fromClause = fromClause + table + " JOIN ";
-        }
-        if (relatedTables.size() > 0){
-            fromClause = fromClause.substring(0, fromClause.length()-6) + " ";
-        }else{
-            fromClause = "";
+        if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()){
+            for (DataTable table : relatedTables) {
+                fromClause = fromClause + table.getTableName() + " INNER JOIN ";
+            }
+            if (relatedTables.size() > 0){
+                fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
+            }else{
+                fromClause = "";
+            }
+        } else {
+            List<DataTable> joinedTables = new ArrayList<>();
+            for (int joinId : userIntent.getJoinCondition()){
+                DataRelation dataRelation = dataRelationRepository.findOne(joinId);
+                if (dataRelation == null){
+                    return new GenerateContent(ReturnContentEnum.JOIN_NOT_FOUND, "");
+                }
+                DataField df1 = dataFieldRepository.findOne(dataRelation.getField1_id());
+                DataTable dt1 = dataTableRepository.findOne(df1.getTable_id());
+                DataField df2 = dataFieldRepository.findOne(dataRelation.getField2_id());
+                DataTable dt2 = dataTableRepository.findOne(df2.getTable_id());
+                if (!(relatedTables.contains(dt1) && relatedTables.contains(dt2))){
+                    return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
+                }
+                if (joinedTables.isEmpty()){
+                    joinedTables.add(dt1);
+                    joinedTables.add(dt2);
+                    fromClause = fromClause.concat(dt1.getTableName()) + " "
+                            + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                            + dt2.getTableName() + " ON " + getDataRelation(dataRelation);
+                } else {
+                    if(!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
+                        return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
+                    } else if (joinedTables.contains(dt1) && joinedTables.contains(dt2)) {
+                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
+                    } else {
+                        if (!joinedTables.contains(dt1)) {
+                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                                    + dt1.getTableName() + " ON " + getDataRelation(dataRelation);
+                            joinedTables.add(dt1);
+                        } else {
+                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                                    + dt2.getTableName() + " ON " + getDataRelation(dataRelation);
+                            joinedTables.add(dt2);
+                        }
+                    }
+                }
+            }
+            if (joinedTables.size() < relatedTables.size()){
+                for (DataTable dt : relatedTables){
+                    if (!joinedTables.contains(dt)) {
+                        fromClause = fromClause.concat(" INNER JOIN ") + dt.getTableName();
+                    }
+                }
+            }
+            fromClause += " ";
         }
 
         // 填充GROUP BY子句
@@ -385,7 +437,25 @@ public class GenetateSQLController {
         return new GenerateContent(ReturnContentEnum.SUCCESS, resultSQL);
     }
 
-    private String oIDtoFieldName(int oID, List<String> relatedTables){
+
+//    private boolean idsInTableList(int id, List<DataTable> dataTables){
+//        for (DataTable dt : dataTables){
+//            if (dt.getTable_id() == id){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+    private String getDataRelation(DataRelation dataRelation){
+        DataField df1 = dataFieldRepository.findOne(dataRelation.getField1_id());
+        DataTable dt1 = dataTableRepository.findOne(df1.getTable_id());
+        DataField df2 = dataFieldRepository.findOne(dataRelation.getField2_id());
+        DataTable dt2 = dataTableRepository.findOne(df2.getTable_id());
+        return dt1.getTableName() + "." + df1.getField_name() + " = " + dt2.getTableName() + "." + df2.getField_name();
+    }
+
+
+    private String oIDtoFieldName(int oID, List<DataTable> relatedTables){
         Object o = objectRepository.findOne(oID);
         if (o == null){
             return null;
@@ -398,8 +468,8 @@ public class GenetateSQLController {
             }
             DataField field = fieldRepository.findOne(ofrs.get(0).getFieldId());
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
-            if (!relatedTables.contains(dataTable.getTableName())){
-                relatedTables.add(dataTable.getTableName());
+            if (!relatedTables.contains(dataTable)){
+                relatedTables.add(dataTable);
             }
             // TODO: 没找到对应字段
             return dataTable.getTableName() + "." + field.getField_name();
@@ -415,8 +485,8 @@ public class GenetateSQLController {
             }
             DataField field = fieldRepository.findOne(ofrs.get(0).getFieldId());
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
-            if (!relatedTables.contains(dataTable.getTableName())){
-                relatedTables.add(dataTable.getTableName());
+            if (!relatedTables.contains(dataTable)){
+                relatedTables.add(dataTable);
             }
             return aggFunction + "(" + dataTable.getTableName() + "." + field.getField_name() + ")";
         } else {
@@ -425,7 +495,7 @@ public class GenetateSQLController {
         }
     }
 
-    private String parseMeasureObject(Object o, List<String> relatedTables){
+    private String parseMeasureObject(Object o, List<DataTable> relatedTables){
         String curWord = "";
         String measure = o.getSql_text();
         if (measure == null)
@@ -439,8 +509,8 @@ public class GenetateSQLController {
                 if (measure.charAt(i) == '.'){
                     DataTable dataTable = dataTableRepository.findByTableName(curWord);
                     if (dataTable != null){
-                        if (!(relatedTables.contains(curWord))){
-                            relatedTables.add(curWord);
+                        if (!(relatedTables.contains(dataTable))){
+                            relatedTables.add(dataTable);
                         }
                     }
                 }
@@ -460,7 +530,7 @@ public class GenetateSQLController {
         return operatorProp.getProperty(String.valueOf(operatorID));
     }
 
-    private String getFilterStatement(Filter filter, List<String> relatedTables){
+    private String getFilterStatement(Filter filter, List<DataTable> relatedTables){
         // 得到操作符
         String fieldName = oIDtoFieldName(filter.getObject(), relatedTables);
         String operator = operatorProp.getProperty(String.valueOf(filter.getOperator()));
@@ -676,7 +746,7 @@ public class GenetateSQLController {
         }
     }
 
-    private String parseFilter(Filter filter, List<String> relatedTables){
+    private String parseFilter(Filter filter, List<DataTable> relatedTables){
         if (filter.getFilterType() == null){
             return null;
         }

@@ -16,6 +16,8 @@ public class UserIntent {
     //应用于本意图的过滤条件
     private List<Integer> predefinedFilters;
     //预过滤条件列表
+    private List<Integer> joinCondition;
+    //连接条件
     private List<Order> orders;
     //排序规则列表
     private Boolean distinct;
@@ -31,6 +33,14 @@ public class UserIntent {
         orders = new ArrayList<>();
         distinct = Boolean.FALSE;
         returnNumber = -1;
+    }
+
+    public List<Integer> getJoinCondition() {
+        return joinCondition;
+    }
+
+    public void setJoinCondition(List<Integer> joinCondition) {
+        this.joinCondition = joinCondition;
     }
 
     public List<Integer> getObjects() {
