@@ -1,7 +1,7 @@
 package com.domain;
 
 public enum ObjectTypeEnum {
-    ATTRIBUTE(1), COMPLEX_MEASURE(2), AGG_MEASURE(3);
+    ATTRIBUTE(1), AGG_MEASURE(2), COMPLEX_MEASURE(3);
 
     private int type;
 

@@ -13,24 +13,24 @@ public class ObjectFieldRelation {
     @GeneratedValue(strategy= GenerationType.AUTO)
 
     @Column(name = "field_id")
-    private int field_id;
+    private int fieldId;
 
     @Column(name = "object_id")
-    private int object_id;
+    private int objectId;
 
-    public int getField_id() {
-        return field_id;
+    public int getFieldId() {
+        return fieldId;
     }
 
-    public void setField_id(int field_id) {
-        this.field_id = field_id;
+    public void setFieldId(int fieldId) {
+        this.fieldId = fieldId;
     }
 
-    public int getObject_id() {
-        return object_id;
+    public int getObjectId() {
+        return objectId;
     }
 
-    public void setObject_id(int object_id) {
-        this.object_id = object_id;
+    public void setObjectId(int objectId) {
+        this.objectId = objectId;
     }
 }

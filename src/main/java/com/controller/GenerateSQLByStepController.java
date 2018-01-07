@@ -184,7 +184,7 @@ public class GenerateSQLByStepController {
     private String oIDtoFieldName(int oID){
         Object o = objectRepository.findOne(oID);
         // 属性字段
-        if (o.getObject_type() == 1){
+        if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
             DataField field = fieldRepository.findOne(Integer.parseInt(o.getSql_text()));
             DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
             if (!relatedTables.contains(dataTable.getTableName())){
@@ -194,7 +194,7 @@ public class GenerateSQLByStepController {
             return dataTable.getTableName() + "." + field.getField_name();
         }
         // 度量字段
-        else if (o.getObject_type() == 2){
+        else if (o.getObject_type() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
             return parseMeasureObject(o.getSql_text());
         }
         else{
