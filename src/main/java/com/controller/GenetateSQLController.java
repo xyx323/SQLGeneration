@@ -377,6 +377,10 @@ public class GenetateSQLController {
                         fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
                     } else {
                         if (!joinedTables.contains(dt1)) {
+                            // 考虑left join和right join的方向性
+                            if (dataRelation.getData_relation_mode() != 1){
+                                return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
+                            }
                             fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
                                     + dt1.getTableName() + " ON " + getDataRelation(dataRelation);
                             joinedTables.add(dt1);
