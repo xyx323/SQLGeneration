@@ -311,8 +311,7 @@ public class GenetateSQLController {
             Object o = objectRepository.findOne(oID);
             String fieldName = oIDtoFieldName(oID, relatedTables);
             if (fieldName != null) {
-                if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() ||
-                        calTypeProp.getProperty(String.valueOf(o.getCal_type())) == null){
+                if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
                     groupByObjects.add(fieldName);
                 }
                 validOIDNum ++;
@@ -492,6 +491,9 @@ public class GenetateSQLController {
             if (!relatedTables.contains(dataTable)){
                 relatedTables.add(dataTable);
             }
+            if (o.getCal_type() == 6) {
+                return "COUNT(DISTINCT " + dataTable.getTableName() + "." + field.getField_name() + ")";
+            }
             return aggFunction + "(" + dataTable.getTableName() + "." + field.getField_name() + ")";
         } else {
             // TODO: object_type出错
@@ -525,6 +527,9 @@ public class GenetateSQLController {
         if (calType == null){
             return measure;
         } else {
+            if (o.getCal_type() == 6) {
+                return "COUNT(DISTINCT " + measure + ")";
+            }
             return calType + "(" + measure + ")";
         }
     }
