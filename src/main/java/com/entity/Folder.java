@@ -9,43 +9,48 @@ import javax.persistence.*;
 public class Folder {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int folder_id;
 
-    private int u_id;
+    @Column(name = "folder_id")
+    private int folderId;
 
-    private String folder_name;
+    @Column(name = "u_id")
+    private int uId;
 
-    private String folder_description;
+    @Column(name = "folder_name")
+    private String folderName;
 
-    public int getFolder_id() {
-        return folder_id;
+    @Column(name = "folder_description")
+    private String folderDescription;
+
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setFolder_id(int folder_id) {
-        this.folder_id = folder_id;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
-    public int getU_id() {
-        return u_id;
+    public int getuId() {
+        return uId;
     }
 
-    public void setU_id(int u_id) {
-        this.u_id = u_id;
+    public void setuId(int uId) {
+        this.uId = uId;
     }
 
-    public String getFolder_name() {
-        return folder_name;
+    public String getFolderName() {
+        return folderName;
     }
 
-    public void setFolder_name(String folder_name) {
-        this.folder_name = folder_name;
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 
-    public String getFolder_description() {
-        return folder_description;
+    public String getFolderDescription() {
+        return folderDescription;
     }
 
-    public void setFolder_description(String folder_description) {
-        this.folder_description = folder_description;
+    public void setFolderDescription(String folderDescription) {
+        this.folderDescription = folderDescription;
     }
 }

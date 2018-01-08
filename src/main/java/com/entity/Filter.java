@@ -7,50 +7,58 @@ import javax.persistence.*;
 public class Filter {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int filter_id;
 
-    private int folder_id;
+    @Column(name = "filter_id")
+    private int filterId;
 
-    private int object_id;
+    @Column(name = "folder_id")
+    private int folderId;
 
-    private String filter_name;
+    @Column(name = "object_id")
+    private int objectId;
 
+    @Column(name = "filter_name")
+    private String filterName;
+
+    @Column(name = "operator")
     private int operator;
 
-    private int operand_type;
+    @Column(name = "operand_type")
+    private int operandType;
 
+    @Column(name = "operands")
     private String operands;
 
-    public int getFilter_id() {
-        return filter_id;
+    public int getFilterId() {
+        return filterId;
     }
 
-    public void setFilter_id(int filter_id) {
-        this.filter_id = filter_id;
+    public void setFilterId(int filterId) {
+        this.filterId = filterId;
     }
 
-    public int getFolder_id() {
-        return folder_id;
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setFolder_id(int folder_id) {
-        this.folder_id = folder_id;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
-    public int getObject_id() {
-        return object_id;
+    public int getObjectId() {
+        return objectId;
     }
 
-    public void setObject_id(int object_id) {
-        this.object_id = object_id;
+    public void setObjectId(int objectId) {
+        this.objectId = objectId;
     }
 
-    public String getFilter_name() {
-        return filter_name;
+    public String getFilterName() {
+        return filterName;
     }
 
-    public void setFilter_name(String filter_name) {
-        this.filter_name = filter_name;
+    public void setFilterName(String filterName) {
+        this.filterName = filterName;
     }
 
     public int getOperator() {
@@ -61,12 +69,12 @@ public class Filter {
         this.operator = operator;
     }
 
-    public int getOperand_type() {
-        return operand_type;
+    public int getOperandType() {
+        return operandType;
     }
 
-    public void setOperand_type(int operand_type) {
-        this.operand_type = operand_type;
+    public void setOperandType(int operandType) {
+        this.operandType = operandType;
     }
 
     public String getOperands() {

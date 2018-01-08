@@ -12,46 +12,46 @@ public class DataRelation {
     @GeneratedValue(strategy= GenerationType.AUTO)
 
     @Column(name = "data_relation_id")
-    private int data_relation_id;
+    private int dataRelationId;
 
     @Column(name = "field1_id")
-    private int field1_id;
+    private int field1Id;
 
     @Column(name = "field2_id")
-    private int field2_id;
+    private int field2Id;
 
     @Column(name = "data_relation_mode")
-    private int data_relation_mode;
+    private int dataRelationMode;
 
-    public int getData_relation_id() {
-        return data_relation_id;
+    public int getDataRelationId() {
+        return dataRelationId;
     }
 
-    public void setData_relation_id(int data_relation_id) {
-        this.data_relation_id = data_relation_id;
+    public void setDataRelationId(int dataRelationId) {
+        this.dataRelationId = dataRelationId;
     }
 
-    public int getField1_id() {
-        return field1_id;
+    public int getField1Id() {
+        return field1Id;
     }
 
-    public void setField1_id(int field1_id) {
-        this.field1_id = field1_id;
+    public void setField1Id(int field1Id) {
+        this.field1Id = field1Id;
     }
 
-    public int getField2_id() {
-        return field2_id;
+    public int getField2Id() {
+        return field2Id;
     }
 
-    public void setField2_id(int field2_id) {
-        this.field2_id = field2_id;
+    public void setField2Id(int field2Id) {
+        this.field2Id = field2Id;
     }
 
-    public int getData_relation_mode() {
-        return data_relation_mode;
+    public int getDataRelationMode() {
+        return dataRelationMode;
     }
 
-    public void setData_relation_mode(int data_relation_mode) {
-        this.data_relation_mode = data_relation_mode;
+    public void setDataRelationMode(int dataRelationMode) {
+        this.dataRelationMode = dataRelationMode;
     }
 }

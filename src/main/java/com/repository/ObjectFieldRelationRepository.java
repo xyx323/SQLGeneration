@@ -3,6 +3,7 @@ package com.repository;
 import com.entity.ObjectFieldRelation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -19,5 +20,5 @@ import java.util.List;
 public interface ObjectFieldRelationRepository extends CrudRepository<ObjectFieldRelation, Integer> {
     List<ObjectFieldRelation> findAllByFieldId(int fieldId);
 
-    List<ObjectFieldRelation> findAllByObjectId(int objectId);
+    List<ObjectFieldRelation> findAllByObjectId(@Param("objectId") int objectId);
 }

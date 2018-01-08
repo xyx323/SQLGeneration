@@ -12,80 +12,79 @@ public class Object {
     @GeneratedValue(strategy= GenerationType.AUTO)
 
     @Column(name = "object_id")
-    private int object_id;
+    private int objectId;
 
     @Column(name = "folder_id")
-    private int folder_id;
+    private int folderId;
 
     @Column(name = "object_name")
-    private String object_name;
+    private String objectName;
 
     @Column(name = "object_description")
-    private String object_description;
+    private String objectDescription;
 
     @Column(name = "object_type")
-    private int object_type;
+    private int objectType;
 
     @Column(name = "cal_type")
-    private int cal_type;
+    private int calType;
 
     @Column(name = "sql_text")
-    private String sql_text;
+    private String sqlText;
 
-    //@Column(name="object_id")
-    public int getObject_id() {
-        return object_id;
+    public int getObjectId() {
+        return objectId;
     }
 
-    public void setObject_id(int object_id) {
-        this.object_id = object_id;
+    public void setObjectId(int objectId) {
+        this.objectId = objectId;
     }
 
-    public int getFolder_id() {
-        return folder_id;
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setFolder_id(int folder_id) {
-        this.folder_id = folder_id;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
-    public String getObject_name() {
-        return object_name;
+    public String getObjectName() {
+        return objectName;
     }
 
-    public void setObject_name(String object_name) {
-        this.object_name = object_name;
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
     }
 
-    public String getObject_description() {
-        return object_description;
+    public String getObjectDescription() {
+        return objectDescription;
     }
 
-    public void setObject_description(String object_description) {
-        this.object_description = object_description;
+    public void setObjectDescription(String objectDescription) {
+        this.objectDescription = objectDescription;
     }
 
-    public int getObject_type() {
-        return object_type;
+    public int getObjectType() {
+        return objectType;
     }
 
-    public void setObject_type(int object_type) {
-        this.object_type = object_type;
+    public void setObjectType(int objectType) {
+        this.objectType = objectType;
     }
 
-    public int getCal_type() {
-        return cal_type;
+    public int getCalType() {
+        return calType;
     }
 
-    public void setCal_type(int cal_type) {
-        this.cal_type = cal_type;
+    public void setCalType(int calType) {
+        this.calType = calType;
     }
 
-    public String getSql_text() {
-        return sql_text;
+    public String getSqlText() {
+        return sqlText;
     }
 
-    public void setSql_text(String sql_text) {
-        this.sql_text = sql_text;
+    public void setSqlText(String sqlText) {
+        this.sqlText = sqlText;
     }
    }

@@ -11,14 +11,59 @@ import javax.persistence.*;
 public class DataFoundation {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int df_id;
 
-    private String df_name;
+    @Column(name = "df_id")
+    private int dfId;
 
-    private String df_creator;
+    @Column(name = "df_name")
+    private String dfName;
 
-    private String df_create_time;
+    @Column(name = "df_creator")
+    private String dfCreator;
 
-    private String df_description;
+    @Column(name = "df_create_time")
+    private String dfCreateTime;
 
+    @Column(name = "df_description")
+    private String dfDescription;
+
+    public int getDfId() {
+        return dfId;
+    }
+
+    public void setDfId(int dfId) {
+        this.dfId = dfId;
+    }
+
+    public String getDfName() {
+        return dfName;
+    }
+
+    public void setDfName(String dfName) {
+        this.dfName = dfName;
+    }
+
+    public String getDfCreator() {
+        return dfCreator;
+    }
+
+    public void setDfCreator(String dfCreator) {
+        this.dfCreator = dfCreator;
+    }
+
+    public String getDfCreateTime() {
+        return dfCreateTime;
+    }
+
+    public void setDfCreateTime(String dfCreateTime) {
+        this.dfCreateTime = dfCreateTime;
+    }
+
+    public String getDfDescription() {
+        return dfDescription;
+    }
+
+    public void setDfDescription(String dfDescription) {
+        this.dfDescription = dfDescription;
+    }
 }

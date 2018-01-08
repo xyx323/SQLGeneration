@@ -12,29 +12,32 @@ public class DataTable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
 
-    private int table_id;
+    @Column(name = "table_id")
+    private int tableId;
 
-    private int df_id;
+    @Column(name = "df_id")
+    private int dfId;
 
     @Column(name = "table_name")
     private String tableName;
 
-    private String table_description;
+    @Column(name = "table_description")
+    private String tableDescription;
 
-    public int getTable_id() {
-        return table_id;
+    public int getTableId() {
+        return tableId;
     }
 
-    public void setTable_id(int table_id) {
-        this.table_id = table_id;
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
     }
 
-    public int getDf_id() {
-        return df_id;
+    public int getDfId() {
+        return dfId;
     }
 
-    public void setDf_id(int df_id) {
-        this.df_id = df_id;
+    public void setDfId(int dfId) {
+        this.dfId = dfId;
     }
 
     public String getTableName() {
@@ -45,11 +48,11 @@ public class DataTable {
         this.tableName = tableName;
     }
 
-    public String getTable_description() {
-        return table_description;
+    public String getTableDescription() {
+        return tableDescription;
     }
 
-    public void setTable_description(String table_description) {
-        this.table_description = table_description;
+    public void setTableDescription(String tableDescription) {
+        this.tableDescription = tableDescription;
     }
 }

@@ -9,64 +9,82 @@ import javax.persistence.*;
 public class Universe {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int u_id;
 
-    private int df_id;
+    @Column(name = "u_id")
+    private int uId;
 
-    private int dbc_id;
+    @Column(name = "df_id")
+    private int dfId;
 
-    private String u_creator;
+    @Column(name = "dbc_id")
+    private int dbcId;
 
-    private String u_create_time;
+    @Column(name = "universe_name")
+    private String universeName;
 
-    private String u_description;
+    @Column(name = "u_creator")
+    private String uCreator;
 
-    public int getU_id() {
-        return u_id;
+    @Column(name = "u_create_time")
+    private String uCreateTime;
+
+    @Column(name = "u_description")
+    private String uDescription;
+
+    public int getuId() {
+        return uId;
     }
 
-    public void setU_id(int u_id) {
-        this.u_id = u_id;
+    public void setuId(int uId) {
+        this.uId = uId;
     }
 
-    public int getDf_id() {
-        return df_id;
+    public int getDfId() {
+        return dfId;
     }
 
-    public void setDf_id(int df_id) {
-        this.df_id = df_id;
+    public void setDfId(int dfId) {
+        this.dfId = dfId;
     }
 
-    public int getDbc_id() {
-        return dbc_id;
+    public int getDbcId() {
+        return dbcId;
     }
 
-    public void setDbc_id(int dbc_id) {
-        this.dbc_id = dbc_id;
+    public void setDbcId(int dbcId) {
+        this.dbcId = dbcId;
     }
 
-    public String getU_creator() {
-        return u_creator;
+    public String getuCreator() {
+        return uCreator;
     }
 
-    public void setU_creator(String u_creator) {
-        this.u_creator = u_creator;
+    public void setuCreator(String uCreator) {
+        this.uCreator = uCreator;
     }
 
-    public String getU_create_time() {
-        return u_create_time;
+    public String getuCreateTime() {
+        return uCreateTime;
     }
 
-    public void setU_create_time(String u_create_time) {
-        this.u_create_time = u_create_time;
+    public void setuCreateTime(String uCreateTime) {
+        this.uCreateTime = uCreateTime;
     }
 
-    public String getU_description() {
-        return u_description;
+    public String getuDescription() {
+        return uDescription;
     }
 
-    public void setU_description(String u_description) {
-        this.u_description = u_description;
+    public void setuDescription(String uDescription) {
+        this.uDescription = uDescription;
+    }
+
+    public String getUniverseName() {
+        return universeName;
+    }
+
+    public void setUniverseName(String universeName) {
+        this.universeName = universeName;
     }
 }
 

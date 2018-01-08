@@ -52,7 +52,7 @@ public class FilterController {
         if (objectEntity == null) {
             return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
         }
-        if (objectEntity.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 1){
+        if (objectEntity.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 1){
             String fieldType = findObjectFieldType(objectEntity);
             if (fieldType != null){
                 if (filter.getOperand() instanceof List<?>){
@@ -82,7 +82,7 @@ public class FilterController {
                     }
                 }
             }
-        } else if (objectEntity.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 2){
+        } else if (objectEntity.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 2){
             String fieldType = findObjectFieldType(objectEntity);
             if (fieldType != null) {
                 if (filter.getOperand() instanceof List<?>) {
@@ -184,9 +184,9 @@ public class FilterController {
 
     private String findObjectFieldType(Object object){
         // 属性字段
-        if (object.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
-            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getSql_text()));
-            return field.getField_type();
+        if (object.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
+            DataField field = dataFieldRepository.findOne(Integer.parseInt(object.getSqlText()));
+            return field.getFieldType();
         }
         else{
             // TODO: object_type出错

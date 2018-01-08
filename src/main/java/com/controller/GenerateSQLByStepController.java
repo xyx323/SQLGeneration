@@ -122,7 +122,7 @@ public class GenerateSQLByStepController {
         List<Integer> predefinedFilters = Application.userIntent.getPredefinedFilters();
         for (int filterID : predefinedFilters){
             com.entity.Filter preFilter = filterRepository.findOne(filterID);
-            String fieldName = oIDtoFieldName(preFilter.getObject_id());
+            String fieldName = oIDtoFieldName(preFilter.getObjectId());
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
             String operand = preFilter.getOperands();
@@ -184,18 +184,18 @@ public class GenerateSQLByStepController {
     private String oIDtoFieldName(int oID){
         Object o = objectRepository.findOne(oID);
         // 属性字段
-        if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
-            DataField field = fieldRepository.findOne(Integer.parseInt(o.getSql_text()));
-            DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
+        if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
+            DataField field = fieldRepository.findOne(Integer.parseInt(o.getSqlText()));
+            DataTable dataTable = dataTableRepository.findOne(field.getTableId());
             if (!relatedTables.contains(dataTable.getTableName())){
                 relatedTables.add(dataTable.getTableName());
             }
             // TODO: 没找到对应字段
-            return dataTable.getTableName() + "." + field.getField_name();
+            return dataTable.getTableName() + "." + field.getFieldName();
         }
         // 度量字段
-        else if (o.getObject_type() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
-            return parseMeasureObject(o.getSql_text());
+        else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
+            return parseMeasureObject(o.getSqlText());
         }
         else{
             // TODO: object_type出错
@@ -448,7 +448,7 @@ public class GenerateSQLByStepController {
 //        Gson gson = new Gson();
 //
 //        Filter preFilter = filterRepository.findOne(filterID);
-//        String fieldName = oIDtoFieldName(preFilter.getObject_id());
+//        String fieldName = oIDtoFieldName(preFilter.getObjectId());
 //        String operator = operatorProp.getProperty(String.valueOf(preFilter.getOperator()));
 //        if (operator == null){
 //            // TODO: 错误处理 无法得到操作符

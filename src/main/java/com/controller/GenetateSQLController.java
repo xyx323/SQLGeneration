@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.crypto.Data;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +136,7 @@ public class GenetateSQLController {
             if (objectEntity == null) {
                 return new ReturnContent(ReturnContentEnum.OBJECT_NOT_FOUND.getStatus(), ReturnContentEnum.OBJECT_NOT_FOUND.getInfo());
             }
-            if (objectEntity.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 1) {
+            if (objectEntity.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 1) {
                 String fieldType = findObjectFieldType(objectEntity);
                 if (fieldType != null) {
                     if (filter.getOperand() instanceof List<?>) {
@@ -167,7 +166,7 @@ public class GenetateSQLController {
                         }
                     }
                 }
-            } else if (objectEntity.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 2) {
+            } else if (objectEntity.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() && filter.getOperandType() == 2) {
                 String fieldType = findObjectFieldType(objectEntity);
                 if (fieldType != null) {
                     if (filter.getOperand() instanceof List<?>) {
@@ -270,13 +269,13 @@ public class GenetateSQLController {
 
     private String findObjectFieldType(Object object){
         // 属性字段
-        if (object.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
-            List<ObjectFieldRelation> ofrs = objectFieldRelationRepository.findAllByObjectId(object.getObject_id());
+        if (object.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
+            List<ObjectFieldRelation> ofrs = objectFieldRelationRepository.findAllByObjectId(object.getObjectId());
             if (ofrs == null || ofrs.size() != 1){
                 return null;
             }
             DataField field = fieldRepository.findOne(ofrs.get(0).getFieldId());
-            return field.getField_type();
+            return field.getFieldType();
         }
         else{
             // TODO: object_type出错
@@ -311,8 +310,8 @@ public class GenetateSQLController {
             Object o = objectRepository.findOne(oID);
             String fieldName = oIDtoFieldName(oID, relatedTables);
             if (fieldName != null) {
-                if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType() ||
-                        calTypeProp.getProperty(String.valueOf(o.getCal_type())) == null){
+                if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() ||
+                        calTypeProp.getProperty(String.valueOf(o.getCalType())) == null){
                     groupByObjects.add(fieldName);
                 }
                 validOIDNum ++;
@@ -357,10 +356,10 @@ public class GenetateSQLController {
                 if (dataRelation == null){
                     return new GenerateContent(ReturnContentEnum.JOIN_NOT_FOUND, "");
                 }
-                DataField df1 = dataFieldRepository.findOne(dataRelation.getField1_id());
-                DataTable dt1 = dataTableRepository.findOne(df1.getTable_id());
-                DataField df2 = dataFieldRepository.findOne(dataRelation.getField2_id());
-                DataTable dt2 = dataTableRepository.findOne(df2.getTable_id());
+                DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
+                DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
+                DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
+                DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
                 if (!(relatedTables.contains(dt1) && relatedTables.contains(dt2))){
                     return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
                 }
@@ -368,7 +367,7 @@ public class GenetateSQLController {
                     joinedTables.add(dt1);
                     joinedTables.add(dt2);
                     fromClause = fromClause.concat(dt1.getTableName()) + " "
-                            + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                            + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
                             + dt2.getTableName() + " ON " + getDataRelation(dataRelation);
                 } else {
                     if(!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
@@ -378,14 +377,14 @@ public class GenetateSQLController {
                     } else {
                         if (!joinedTables.contains(dt1)) {
                             // 考虑left join和right join的方向性
-                            if (dataRelation.getData_relation_mode() != 1){
+                            if (dataRelation.getDataRelationMode() != 1){
                                 return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
                             }
-                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
                                     + dt1.getTableName() + " ON " + getDataRelation(dataRelation);
                             joinedTables.add(dt1);
                         } else {
-                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getData_relation_mode())) + " "
+                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
                                     + dt2.getTableName() + " ON " + getDataRelation(dataRelation);
                             joinedTables.add(dt2);
                         }
@@ -444,18 +443,18 @@ public class GenetateSQLController {
 
 //    private boolean idsInTableList(int id, List<DataTable> dataTables){
 //        for (DataTable dt : dataTables){
-//            if (dt.getTable_id() == id){
+//            if (dt.getTableId() == id){
 //                return true;
 //            }
 //        }
 //        return false;
 //    }
     private String getDataRelation(DataRelation dataRelation){
-        DataField df1 = dataFieldRepository.findOne(dataRelation.getField1_id());
-        DataTable dt1 = dataTableRepository.findOne(df1.getTable_id());
-        DataField df2 = dataFieldRepository.findOne(dataRelation.getField2_id());
-        DataTable dt2 = dataTableRepository.findOne(df2.getTable_id());
-        return dt1.getTableName() + "." + df1.getField_name() + " = " + dt2.getTableName() + "." + df2.getField_name();
+        DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
+        DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
+        DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
+        DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
+        return dt1.getTableName() + "." + df1.getFieldName() + " = " + dt2.getTableName() + "." + df2.getFieldName();
     }
 
 
@@ -466,33 +465,33 @@ public class GenetateSQLController {
         }
         List<ObjectFieldRelation> ofrs = objectFieldRelationRepository.findAllByObjectId(oID);
         // 属性字段
-        if (o.getObject_type() == ObjectTypeEnum.ATTRIBUTE.getType()){
+        if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
             if (ofrs == null || ofrs.size() != 1){
                 return null;
             }
             DataField field = fieldRepository.findOne(ofrs.get(0).getFieldId());
-            DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
+            DataTable dataTable = dataTableRepository.findOne(field.getTableId());
             if (!relatedTables.contains(dataTable)){
                 relatedTables.add(dataTable);
             }
             // TODO: 没找到对应字段
-            return dataTable.getTableName() + "." + field.getField_name();
+            return dataTable.getTableName() + "." + field.getFieldName();
         }
         // 度量字段
-        else if (o.getObject_type() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
+        else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
             return parseMeasureObject(o, relatedTables);
         }
-        else if (o.getObject_type() == ObjectTypeEnum.AGG_MEASURE.getType()){
-            String aggFunction = calTypeProp.getProperty(String.valueOf(o.getCal_type()));
+        else if (o.getObjectType() == ObjectTypeEnum.AGG_MEASURE.getType()){
+            String aggFunction = calTypeProp.getProperty(String.valueOf(o.getCalType()));
             if (ofrs == null || ofrs.size() != 1 || aggFunction == null){
                 return null;
             }
             DataField field = fieldRepository.findOne(ofrs.get(0).getFieldId());
-            DataTable dataTable = dataTableRepository.findOne(field.getTable_id());
+            DataTable dataTable = dataTableRepository.findOne(field.getTableId());
             if (!relatedTables.contains(dataTable)){
                 relatedTables.add(dataTable);
             }
-            return aggFunction + "(" + dataTable.getTableName() + "." + field.getField_name() + ")";
+            return aggFunction + "(" + dataTable.getTableName() + "." + field.getFieldName() + ")";
         } else {
             // TODO: object_type出错
             return null;
@@ -501,7 +500,7 @@ public class GenetateSQLController {
 
     private String parseMeasureObject(Object o, List<DataTable> relatedTables){
         String curWord = "";
-        String measure = o.getSql_text();
+        String measure = o.getSqlText();
         if (measure == null)
         {
             return null;
@@ -521,7 +520,7 @@ public class GenetateSQLController {
                 curWord = "";
             }
         }
-        String calType = calTypeProp.getProperty(String.valueOf(o.getCal_type()));
+        String calType = calTypeProp.getProperty(String.valueOf(o.getCalType()));
         if (calType == null){
             return measure;
         } else {
@@ -761,7 +760,7 @@ public class GenetateSQLController {
                 return null;
             }
             com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
-            String fieldName = oIDtoFieldName(preFilter.getObject_id(), relatedTables);
+            String fieldName = oIDtoFieldName(preFilter.getObjectId(), relatedTables);
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
             String operand = preFilter.getOperands();

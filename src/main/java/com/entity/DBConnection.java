@@ -11,15 +11,70 @@ import javax.persistence.*;
 public class DBConnection {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int dbc_id;
 
-    private String db_name;
+    @Column(name = "dbc_id")
+    private int dbcId;
 
-    private String db_location;
+    @Column(name = "db_name")
+    private String dbName;
 
-    private String db_port;
+    @Column(name = "db_location")
+    private String dbLocation;
 
-    private String db_account;
+    @Column(name = "db_port")
+    private String dbPort;
 
-    private String db_pwd;
+    @Column(name = "db_account")
+    private String dbAccount;
+
+    @Column(name = "db_pwd")
+    private String dbPwd;
+
+    public int getDbcId() {
+        return dbcId;
+    }
+
+    public void setDbcId(int dbcId) {
+        this.dbcId = dbcId;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getDbLocation() {
+        return dbLocation;
+    }
+
+    public void setDbLocation(String dbLocation) {
+        this.dbLocation = dbLocation;
+    }
+
+    public String getDbPort() {
+        return dbPort;
+    }
+
+    public void setDbPort(String dbPort) {
+        this.dbPort = dbPort;
+    }
+
+    public String getDbAccount() {
+        return dbAccount;
+    }
+
+    public void setDbAccount(String dbAccount) {
+        this.dbAccount = dbAccount;
+    }
+
+    public String getDbPwd() {
+        return dbPwd;
+    }
+
+    public void setDbPwd(String dbPwd) {
+        this.dbPwd = dbPwd;
+    }
 }

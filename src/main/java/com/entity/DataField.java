@@ -7,73 +7,81 @@ import javax.persistence.*;
 public class DataField {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int field_id;
 
-    private int table_id;
+    @Column(name = "field_id")
+    private int fieldId;
 
-    private String field_name;
+    @Column(name = "table_id")
+    private int tableId;
 
-    private String field_type;
+    @Column(name = "field_name")
+    private String fieldName;
 
-    private int field_length;
+    @Column(name = "field_type")
+    private String fieldType;
 
-    private boolean is_pk;
+    @Column(name = "field_length")
+    private int fieldLength;
 
-    private boolean is_fk;
+    @Column(name = "is_pk")
+    private boolean isPk;
 
-    public int getField_id() {
-        return field_id;
+    @Column(name = "is_fk")
+    private boolean isFk;
+
+    public int getFieldId() {
+        return fieldId;
     }
 
-    public void setField_id(int field_id) {
-        this.field_id = field_id;
+    public void setFieldId(int fieldId) {
+        this.fieldId = fieldId;
     }
 
-    public int getTable_id() {
-        return table_id;
+    public int getTableId() {
+        return tableId;
     }
 
-    public void setTable_id(int table_id) {
-        this.table_id = table_id;
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
     }
 
-    public String getField_name() {
-        return field_name;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setField_name(String field_name) {
-        this.field_name = field_name;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
-    public String getField_type() {
-        return field_type;
+    public String getFieldType() {
+        return fieldType;
     }
 
-    public void setField_type(String field_type) {
-        this.field_type = field_type;
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
-    public int getField_length() {
-        return field_length;
+    public int getFieldLength() {
+        return fieldLength;
     }
 
-    public void setField_length(int field_length) {
-        this.field_length = field_length;
+    public void setFieldLength(int fieldLength) {
+        this.fieldLength = fieldLength;
     }
 
-    public boolean isIs_pk() {
-        return is_pk;
+    public boolean isPk() {
+        return isPk;
     }
 
-    public void setIs_pk(boolean is_pk) {
-        this.is_pk = is_pk;
+    public void setPk(boolean pk) {
+        this.isPk = pk;
     }
 
-    public boolean isIs_fk() {
-        return is_fk;
+    public boolean isFk() {
+        return isFk;
     }
 
-    public void setIs_fk(boolean is_fk) {
-        this.is_fk = is_fk;
+    public void setFk(boolean fk) {
+        this.isFk = fk;
     }
 }
