@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -310,8 +311,7 @@ public class GenetateSQLController {
             Object o = objectRepository.findOne(oID);
             String fieldName = oIDtoFieldName(oID, relatedTables);
             if (fieldName != null) {
-                if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType() ||
-                        calTypeProp.getProperty(String.valueOf(o.getCalType())) == null){
+                if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
                     groupByObjects.add(fieldName);
                 }
                 validOIDNum ++;
@@ -491,6 +491,9 @@ public class GenetateSQLController {
             if (!relatedTables.contains(dataTable)){
                 relatedTables.add(dataTable);
             }
+            if (o.getCalType() == 6) {
+                return "COUNT(DISTINCT " + dataTable.getTableName() + "." + field.getFieldName() + ")";
+            }
             return aggFunction + "(" + dataTable.getTableName() + "." + field.getFieldName() + ")";
         } else {
             // TODO: object_type出错
@@ -524,6 +527,9 @@ public class GenetateSQLController {
         if (calType == null){
             return measure;
         } else {
+            if (o.getCalType() == 6) {
+                return "COUNT(DISTINCT " + measure + ")";
+            }
             return calType + "(" + measure + ")";
         }
     }

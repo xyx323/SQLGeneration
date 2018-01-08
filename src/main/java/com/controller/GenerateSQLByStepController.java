@@ -55,7 +55,7 @@ public class GenerateSQLByStepController {
 //        }
 //    }
 
-    @RequestMapping(value = "/generateSQLByStep", method = RequestMethod.GET)
+//     @RequestMapping(value = "/generateSQLByStep", method = RequestMethod.GET)
     public GenerateContent generateSQLByStep() {
         relatedTables.clear();
         try {
