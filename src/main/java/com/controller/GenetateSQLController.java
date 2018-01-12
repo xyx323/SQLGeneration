@@ -339,11 +339,17 @@ public class GenetateSQLController {
 
         // 填充from子句
         String fromClause = "FROM ";
+        String fromClauseFilter = "";
+        if (userIntent.getJoinFilter() != null){
+            fromClauseFilter = parseFilter(userIntent.getJoinFilter(), relatedTables, alias);
+        }
         if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()){
             for (DataTable table : relatedTables) {
                 fromClause = fromClause + table.getTableName() + " INNER JOIN ";
             }
-            if (relatedTables.size() > 0){
+            if (relatedTables.size() > 1){
+                fromClause = fromClause.substring(0, fromClause.length()-12) + " ON " + fromClauseFilter;
+            } else if (relatedTables.size() == 1) {
                 fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
             }else{
                 fromClause = "";
@@ -396,6 +402,9 @@ public class GenetateSQLController {
                         fromClause = fromClause.concat(" INNER JOIN ") + dt.getTableName();
                     }
                 }
+                fromClause = fromClause + " ON " + fromClauseFilter;
+            } else {
+                fromClause = fromClause + " AND " + fromClauseFilter;
             }
             fromClause += " ";
         }
