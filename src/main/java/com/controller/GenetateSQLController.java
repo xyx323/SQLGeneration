@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.xml.crypto.Data;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @RestController
 public class GenetateSQLController {
@@ -287,6 +285,7 @@ public class GenetateSQLController {
     private GenerateContent generateSQLFromUserIntent(UserIntent userIntent) {
         List<DataTable> relatedTables = new ArrayList<>();
         List<String> groupByObjects = new ArrayList<>();
+        Map<String, Integer> alias = new HashMap<>();
 //        try {
 //            InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
 //            operatorProp.load(in);
@@ -309,7 +308,7 @@ public class GenetateSQLController {
         int validOIDNum = 0;
         for (int oID : oIDs) {
             Object o = objectRepository.findOne(oID);
-            String fieldName = oIDtoFieldName(oID, relatedTables);
+            String fieldName = oIDtoFieldName(oID, relatedTables, alias);
             if (fieldName != null) {
                 if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
                     groupByObjects.add(fieldName);
@@ -331,11 +330,11 @@ public class GenetateSQLController {
         // 填充过滤条件
         String whereClause = "";
         if (userIntent.getFilter() != null){
-            String filterStatement = parseFilter(userIntent.getFilter(), relatedTables);
+            String filterStatement = parseFilter(userIntent.getFilter(), relatedTables, alias);
             if (filterStatement == null){
                 return new GenerateContent(ReturnContentEnum.PARSE_FILTER_ERROR, "");
             }
-            whereClause = "WHERE " + parseFilter(userIntent.getFilter(), relatedTables) + " ";
+            whereClause = "WHERE " + parseFilter(userIntent.getFilter(), relatedTables, alias) + " ";
         }
 
         // 填充from子句
@@ -418,7 +417,7 @@ public class GenetateSQLController {
             orderClause += "ORDER BY ";
 
             for (Order order : orders) {
-                orderClause = orderClause + oIDtoFieldName(order.getObject(), relatedTables);
+                orderClause = orderClause + oIDtoFieldName(order.getObject(), relatedTables, alias);
                 if (order.getOrder() != 1) {
                     orderClause += " DESC";
                 }
@@ -458,7 +457,7 @@ public class GenetateSQLController {
     }
 
 
-    private String oIDtoFieldName(int oID, List<DataTable> relatedTables){
+    private String oIDtoFieldName(int oID, List<DataTable> relatedTables, Map<String, Integer> alias){
         Object o = objectRepository.findOne(oID);
         if (o == null){
             return null;
@@ -479,7 +478,7 @@ public class GenetateSQLController {
         }
         // 度量字段
         else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
-            return parseMeasureObject(o, relatedTables);
+            return parseMeasureObject(o, relatedTables, alias);
         }
         else if (o.getObjectType() == ObjectTypeEnum.AGG_MEASURE.getType()){
             String aggFunction = calTypeProp.getProperty(String.valueOf(o.getCalType()));
@@ -501,7 +500,7 @@ public class GenetateSQLController {
         }
     }
 
-    private String parseMeasureObject(Object o, List<DataTable> relatedTables){
+    private String parseMeasureObject(Object o, List<DataTable> relatedTables, Map<String, Integer> alias){
         String measure = o.getSqlText();
         if (measure == null)
         {
@@ -516,15 +515,26 @@ public class GenetateSQLController {
                 relatedTables.add(dt);
             }
         }
+        // 设置别名，如果和之前的有重复，则在后面加上不重复的数字后缀
+        String objectName = o.getObjectName();
+        // 替换所有空格为下划线
+        objectName = objectName.replaceAll(" ", "_");
+        if (!alias.containsKey(objectName)){
+            alias.put(objectName, 1);
+        } else {
+            int sameNameNum = alias.get(objectName);
+            alias.put(objectName, sameNameNum + 1);
+            objectName = objectName + String.valueOf(sameNameNum + 1);
+        }
 
         String calType = calTypeProp.getProperty(String.valueOf(o.getCalType()));
         if (calType == null){
-            return measure;
+            return "(" + measure + ")" +objectName;
         } else {
             if (o.getCalType() == 6) {
-                return "COUNT(DISTINCT " + measure + ")";
+                return "COUNT(DISTINCT " + measure + ")" + objectName;
             }
-            return calType + "(" + measure + ")";
+            return calType + "(" + measure + ")" + objectName;
         }
     }
 
@@ -533,9 +543,9 @@ public class GenetateSQLController {
         return operatorProp.getProperty(String.valueOf(operatorID));
     }
 
-    private String getFilterStatement(Filter filter, List<DataTable> relatedTables){
+    private String getFilterStatement(Filter filter, List<DataTable> relatedTables, Map<String, Integer> alias){
         // 得到操作符
-        String fieldName = oIDtoFieldName(filter.getObject(), relatedTables);
+        String fieldName = oIDtoFieldName(filter.getObject(), relatedTables, alias);
         String operator = operatorProp.getProperty(String.valueOf(filter.getOperator()));
         if (operator == null){
             // TODO: 错误处理 无法得到操作符
@@ -566,7 +576,7 @@ public class GenetateSQLController {
                 else if (type == 2) {
                     if (boundries.get(0) instanceof Integer && boundries.get(1) instanceof Integer) {
                         return fieldName + " " + operator + " "
-                                + oIDtoFieldName((int) boundries.get(0), relatedTables) + " AND " + oIDtoFieldName((int) boundries.get(1), relatedTables);
+                                + oIDtoFieldName((int) boundries.get(0), relatedTables, alias) + " AND " + oIDtoFieldName((int) boundries.get(1), relatedTables, alias);
                     } else {
                         // TODO: 错误处理 类型不匹配
                         return null;
@@ -623,7 +633,7 @@ public class GenetateSQLController {
                             return null;
                         }
                         else {
-                            candiStr = candiStr + oIDtoFieldName((int) candidate, relatedTables) + ", ";
+                            candiStr = candiStr + oIDtoFieldName((int) candidate, relatedTables, alias) + ", ";
                         }
                     }
                 }else if (type == 3 || type == 4){
@@ -692,7 +702,7 @@ public class GenetateSQLController {
                             // TODO: 错误处理 类型不匹配
                             return null;
                         }
-                        subFilter = fieldName + " = " + oIDtoFieldName((int) value, relatedTables) + " OR ";
+                        subFilter = fieldName + " = " + oIDtoFieldName((int) value, relatedTables, alias) + " OR ";
                         resultFilter += subFilter;
                     }
                 } else if (type == 3 || type == 4){
@@ -733,7 +743,7 @@ public class GenetateSQLController {
                         // TODO: 错误处理 类型不匹配
                         return null;
                     }
-                    return fieldName + " " + operator + " " + oIDtoFieldName((int) operand, relatedTables);
+                    return fieldName + " " + operator + " " + oIDtoFieldName((int) operand, relatedTables, alias);
                 } else if (type == 3 || type == 4){
                     if (!(operand instanceof Integer)) {
                         // TODO: 错误处理 类型不匹配
@@ -749,18 +759,18 @@ public class GenetateSQLController {
         }
     }
 
-    private String parseFilter(Filter filter, List<DataTable> relatedTables){
+    private String parseFilter(Filter filter, List<DataTable> relatedTables, Map<String, Integer> alias){
         if (filter.getFilterType() == null){
             return null;
         }
         if (filter.getFilterType() == 2){
-            return getFilterStatement(filter, relatedTables);
+            return getFilterStatement(filter, relatedTables, alias);
         } else if (filter.getFilterType() == 3){
             if (filter.getPredefinedFilterID() == null){
                 return null;
             }
             com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
-            String fieldName = oIDtoFieldName(preFilter.getObjectId(), relatedTables);
+            String fieldName = oIDtoFieldName(preFilter.getObjectId(), relatedTables, alias);
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
             String operand = preFilter.getOperands();
@@ -779,7 +789,7 @@ public class GenetateSQLController {
         String result = "";
         List<String> childStatements = new ArrayList<>();
         for (Filter child : filter.getChildren()){
-            String childStatement = parseFilter(child, relatedTables);
+            String childStatement = parseFilter(child, relatedTables, alias);
             if (childStatement == null){
                 return null;
             }
