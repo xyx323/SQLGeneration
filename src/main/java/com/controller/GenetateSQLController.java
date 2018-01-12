@@ -502,27 +502,21 @@ public class GenetateSQLController {
     }
 
     private String parseMeasureObject(Object o, List<DataTable> relatedTables){
-        String curWord = "";
         String measure = o.getSqlText();
         if (measure == null)
         {
             return null;
         }
-        for (int i = 0; i < measure.length(); i++){
-            if (Character.isLetterOrDigit(measure.charAt(i)) || measure.charAt(i) == '_'){
-                curWord += measure.charAt(i);
-            } else {
-                if (measure.charAt(i) == '.'){
-                    DataTable dataTable = dataTableRepository.findByTableName(curWord);
-                    if (dataTable != null){
-                        if (!(relatedTables.contains(dataTable))){
-                            relatedTables.add(dataTable);
-                        }
-                    }
-                }
-                curWord = "";
+
+        List<ObjectFieldRelation> objectFieldRelations = objectFieldRelationRepository.findAllByObjectId(o.getObjectId());
+        for (ObjectFieldRelation ofr : objectFieldRelations){
+            DataField df = dataFieldRepository.findOne(ofr.getFieldId());
+            DataTable dt = dataTableRepository.findOne(df.getTableId());
+            if (!relatedTables.contains(dt)) {
+                relatedTables.add(dt);
             }
         }
+
         String calType = calTypeProp.getProperty(String.valueOf(o.getCalType()));
         if (calType == null){
             return measure;
