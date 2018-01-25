@@ -20,4 +20,6 @@ import java.util.List;
 public interface DataFoundationRepository extends CrudRepository<DataFoundation, Integer>{
 
     List<DataFoundation> findAllByDfName(@Param("dfName") String dfName);
+
+    List<DataFoundation> findAllByDfNameContaining(@Param("dfName") String dfName);
 }

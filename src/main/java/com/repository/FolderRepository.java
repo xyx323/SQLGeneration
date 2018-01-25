@@ -20,4 +20,6 @@ import java.util.List;
 public interface FolderRepository extends CrudRepository<Folder, Integer>{
 
     List<Folder> findAllByFolderName(@Param("folderName") String folderName);
+
+    List<Folder> findAllByFolderNameContaining(@Param("folderName") String folderName);
 }

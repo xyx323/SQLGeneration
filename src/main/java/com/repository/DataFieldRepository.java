@@ -17,4 +17,6 @@ import java.util.List;
 public interface DataFieldRepository extends CrudRepository<DataField, Integer > {
 
     List<DataField> findAllByFieldName(@Param("fieldName") String fieldName);
+
+    List<DataField> findAllByFieldNameContaining(@Param("fieldName") String fieldName);
 }

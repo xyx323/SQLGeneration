@@ -21,5 +21,9 @@ public interface DataTableRepository extends CrudRepository<DataTable, Integer >
 
     List<DataTable> findAllByTableName(@Param("tableName") String tableName);
 
+    List<DataTable> findAllByTableNameContaining(@Param("tableName") String tableName);
+
     List<DataTable> findAllByTableDescription(@Param("tableDescription") String tableDescription);
+
+    List<DataTable> findAllByTableDescriptionContaining(@Param("tableDescription") String tableDescription);
 }

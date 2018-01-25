@@ -17,4 +17,6 @@ import java.util.List;
 public interface QueryStatementRepository extends CrudRepository<QueryStatement, Integer> {
 
     List<QueryStatement> findAllByQsDescription(@Param("qsDescription") String qsDescription);
+
+    List<QueryStatement> findAllByQsDescriptionContaining(@Param("qsDescription") String qsDescription);
 }

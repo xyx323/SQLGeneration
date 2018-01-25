@@ -17,4 +17,6 @@ import java.util.List;
 public interface FilterRepository extends CrudRepository<Filter, Integer> {
 
     List<Filter> findAllByFilterName(@Param("filterName") String filterName);
+
+    List<Filter> findAllByFilterNameContaining(@Param("filterName") String filterName);
 }

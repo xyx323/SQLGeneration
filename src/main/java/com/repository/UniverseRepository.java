@@ -21,6 +21,7 @@ public interface UniverseRepository extends CrudRepository<Universe, Integer> {
 
     List<Universe> findAllByUniverseName(@Param("universeName") String universeName);
 
+    List<Universe> findAllByUniverseNameContaining(@Param("universeName") String universeName);
 }
 
 

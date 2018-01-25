@@ -21,5 +21,9 @@ public interface ObjectRepository extends CrudRepository<Object, Integer>{
 
     List<Object> findAllByObjectName(@Param("objectName") String objectName);
 
+    List<Object> findAllByObjectNameContaining(@Param("objectName") String objectName);
+
     List<Object> findAllByObjectDescription(@Param("objectDescription") String objectDescription);
+
+    List<Object> findAllByObjectDescriptionContaining(@Param("objectDescription") String objectDescription);
 }
