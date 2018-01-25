@@ -24,6 +24,9 @@ public class DataTable {
     @Column(name = "table_description")
     private String tableDescription;
 
+    @Column(name = "schema_id")
+    private int schemaId;
+
     public int getTableId() {
         return tableId;
     }
@@ -54,5 +57,13 @@ public class DataTable {
 
     public void setTableDescription(String tableDescription) {
         this.tableDescription = tableDescription;
+    }
+
+    public int getSchemaId() {
+        return schemaId;
+    }
+
+    public void setSchemaId(int schemaId) {
+        this.schemaId = schemaId;
     }
 }
