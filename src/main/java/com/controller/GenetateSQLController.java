@@ -690,7 +690,7 @@ public class GenetateSQLController {
                     // TODO: 错误处理 类型不匹配
                     return null;
                 }
-                return fieldName + " " + operator + " '" + (String) operand + "'";
+                return fieldName + " " + operator + " '%" + (String) operand + "%'";
             case 15:
                 if (!(operand instanceof List<?>)) {
                     // TODO: 错误处理 类型不匹配
