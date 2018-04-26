@@ -748,6 +748,21 @@ public class GenetateSQLController {
 
                 resultFilter = resultFilter.substring(0, resultFilter.length() - 3) + ")";
                 return resultFilter;
+            case 16:
+            case 17:
+                if (type != 3 && type != 4){
+                    return null;
+                }
+                if (!(filter.getOperand() instanceof Integer)) {
+                    return null;
+                }
+                int qsID = (int)filter.getOperand();
+                QueryStatement queryStatement = queryStatementRepository.findOne(qsID);
+                if (queryStatement == null) {
+                    return null;
+                }
+                resultFilter = operator + " (" + queryStatement.getQs() + ")";
+                return resultFilter;
             default:
                 if (type == 1) {
                     if (operand instanceof String) {
