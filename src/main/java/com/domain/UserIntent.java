@@ -10,7 +10,7 @@ public class UserIntent {
 
     private List<Integer> objects;
     //查询的对象Id列表
-    private List<Filter> allFilters;
+    private List<Filter> filters;
     //过滤条件列表
     private Filter filter;
     //应用于本意图的过滤条件
@@ -26,13 +26,15 @@ public class UserIntent {
     //是否删除重复记录
     private Integer returnNumber;
     //返回记录数目
+    private List<Integer> logicOperators; // 1: and, 2: or
 
 
     public UserIntent() {
         objects = new ArrayList<>();
-        allFilters = new ArrayList<>();
+        filters = new ArrayList<>();
         predefinedFilters = new ArrayList<>();
         orders = new ArrayList<>();
+        logicOperators = new ArrayList<>();
         distinct = Boolean.FALSE;
         returnNumber = -1;
     }
@@ -61,12 +63,12 @@ public class UserIntent {
         this.objects = objects;
     }
 
-    public List<Filter> getAllFilters() {
-        return allFilters;
+    public List<Filter> getFilters() {
+        return filters;
     }
 
-    public void setAllFilters(List<Filter> allFilters) {
-        this.allFilters = allFilters;
+    public void setFilters(List<Filter> filters) {
+        this.filters = filters;
     }
 
     public List<Integer> getPredefinedFilters() {
@@ -114,11 +116,19 @@ public class UserIntent {
     }
 
     public void addFilter(Filter filter){
-        allFilters.add(filter);
+        filters.add(filter);
     }
 
     public void addPredefinedFilter(int predefinedFilterID){
         predefinedFilters.add(predefinedFilterID);
+    }
+
+    public List<Integer> getLogicOperators() {
+        return logicOperators;
+    }
+
+    public void setLogicOperators(List<Integer> logicOperators) {
+        this.logicOperators = logicOperators;
     }
 
     public void addOrder(Order order){

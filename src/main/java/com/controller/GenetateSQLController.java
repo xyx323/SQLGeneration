@@ -331,13 +331,22 @@ public class GenetateSQLController {
 
         // 填充过滤条件
         String whereClause = "";
-        if (userIntent.getFilter() != null){
-            String filterStatement = parseFilter(userIntent.getFilter(), relatedTables, alias);
-            if (filterStatement == null){
+        if (userIntent.getFilters() != null && !userIntent.getFilters().isEmpty()){
+            String temp = getFilterString(userIntent.getFilters(), userIntent.getLogicOperators(),
+                    relatedTables, alias);
+            if (temp.equals("")) {
                 return new GenerateContent(ReturnContentEnum.PARSE_FILTER_ERROR, "");
             }
-            whereClause = "WHERE " + parseFilter(userIntent.getFilter(), relatedTables, alias) + " ";
+            whereClause = "WHERE " + temp + " ";
+
         }
+//        if (userIntent.getFilter() != null){
+//            String filterStatement = parseFilter(userIntent.getFilter(), relatedTables, alias);
+//            if (filterStatement == null){
+//                return new GenerateContent(ReturnContentEnum.PARSE_FILTER_ERROR, "");
+//            }
+//            whereClause = "WHERE " + parseFilter(userIntent.getFilter(), relatedTables, alias) + " ";
+//        }
 
         // 填充from子句
         String fromClause = "FROM ";
@@ -467,6 +476,36 @@ public class GenetateSQLController {
 //        }
 //        return false;
 //    }
+    private String getFilterString(List<Filter> filters, List<Integer> logicOps,
+                                      List<DataTable> relatedTables, Map<String, Integer> alias){
+        String result = "";
+        if (logicOps.size() != filters.size() - 1){
+            return "";
+        }
+        List<String> filterStatements = new ArrayList<>();
+        for (Filter filter : filters) {
+            String filterStatement = parseFilter(filter, relatedTables, alias);
+            if (filterStatement == null) {
+                return "";
+            }
+            filterStatements.add(filterStatement);
+        }
+        for (int i = 0; i < logicOps.size(); i++) {
+            result = result + filterStatements.get(i) + " ";
+            if (logicOps.get(i) != null) {
+                if (logicOps.get(i) == 1) {
+                    result = result + "AND ";
+                } else if (logicOps.get(i) == 2) {
+                    result = result + "OR ";
+                } else {
+                    return "";
+                }
+            }
+        }
+        result = result + filterStatements.get(filterStatements.size() - 1);
+        return result;
+    }
+
     private String getTableNameWithSchema(DataTable dataTable){
         DataSchema dataSchema = dataSchemaRepository.findOne(dataTable.getSchemaId());
         return dataSchema.getSchemaName() + "." +dataTable.getTableName();

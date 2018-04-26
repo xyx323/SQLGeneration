@@ -151,7 +151,7 @@ public class FilterController {
             }
 
         }
-        if (!Application.userIntent.getAllFilters().contains(filter)) {
+        if (!Application.userIntent.getFilters().contains(filter)) {
             Application.userIntent.addFilter(filter);
         } else {
             return new ReturnContent(ReturnContentEnum.FILTER_EXISTED.getStatus(), ReturnContentEnum.FILTER_EXISTED.getInfo());
