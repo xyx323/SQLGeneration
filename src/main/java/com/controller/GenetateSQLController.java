@@ -483,12 +483,21 @@ public class GenetateSQLController {
             return "";
         }
         List<String> filterStatements = new ArrayList<>();
-        for (Filter filter : filters) {
+        List<Integer> deleted = new ArrayList<>();
+        for (int i = 0; i<filters.size(); i++) {
+            Filter filter = filters.get(i);
             String filterStatement = parseFilter(filter, relatedTables, alias);
             if (filterStatement == null) {
                 return "";
             }
-            filterStatements.add(filterStatement);
+            if (!filterStatements.contains(filterStatement)) {
+                filterStatements.add(filterStatement);
+            } else {
+                deleted.add(i);
+            }
+        }
+        for (int i = deleted.size() - 1; i >= 0; i--) {
+            logicOps.remove(deleted.get(i) - 1);
         }
         for (int i = 0; i < logicOps.size(); i++) {
             result = result + filterStatements.get(i) + " ";
