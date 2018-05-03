@@ -362,7 +362,7 @@ public class GenetateSQLController {
                 if ( fromClauseFilter == null || fromClauseFilter.equals("")){
                     fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
                 } else{
-                    fromClause = fromClause.substring(0, fromClause.length()-12) + " ON " + fromClauseFilter;
+                    fromClause = fromClause.substring(0, fromClause.length()-12) + " ON " + fromClauseFilter + " ";
                 }
             } else if (relatedTables.size() == 1) {
                 fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
@@ -861,29 +861,48 @@ public class GenetateSQLController {
         if (filter.getChildren() == null || filter.getChildren().isEmpty()) {
             return null;
         }
-        if (filter.getLogicOperators().size() != filter.getChildren().size() - 1){
-            return null;
+        if (filter.getLogicOperators() != null) {
+            if (filter.getLogicOperators().size() != filter.getChildren().size() - 1) {
+                return null;
+            }
+        } else {
+            if (filter.getChildren().size() != 1){
+                return null;
+            }
         }
         String result = "";
+        List<Integer> logicOperators = filter.getLogicOperators();
         List<String> childStatements = new ArrayList<>();
-        for (Filter child : filter.getChildren()){
+        List<Integer> deleted = new ArrayList<>();
+        for (int i = 0; i < filter.getChildren().size(); i++){
+            Filter child = filter.getChildren().get(i);
             String childStatement = parseFilter(child, relatedTables, alias);
             if (childStatement == null){
                 return null;
             }
-            childStatements.add(childStatement);
-        }
-        List<Integer> logicOperators = filter.getLogicOperators();
-        for (int i = 0; i < logicOperators.size(); i++){
-            String operator;
-            if (logicOperators.get(i) == 1){
-                operator = " AND ";
-            }else if (logicOperators.get(i) == 2){
-                operator = " OR ";
+            if (!childStatements.contains(childStatement)){
+                childStatements.add(childStatement);
             } else {
-                return null;
+                deleted.add(i);
             }
-            result = result.concat(childStatements.get(i)).concat(operator);
+        }
+
+        if (logicOperators != null){
+            for (int i = deleted.size() - 1; i >= 0; i--){
+                logicOperators.remove(deleted.get(i) - 1);
+            }
+
+            for (int i = 0; i < logicOperators.size(); i++){
+                String operator;
+                if (logicOperators.get(i) == 1){
+                    operator = " AND ";
+                }else if (logicOperators.get(i) == 2){
+                    operator = " OR ";
+                } else {
+                    return null;
+                }
+                result = result.concat(childStatements.get(i)).concat(operator);
+            }
         }
         result = result.concat(childStatements.get(childStatements.size() - 1));
         return "(" + result + ")";
