@@ -50,6 +50,7 @@ public class GenetateSQLController {
     private Properties operatorProp = new Properties();
     private Properties joinTypeProp = new Properties();
     private Properties calTypeProp = new Properties();
+    private Map<DataTable, String> tableAliases = new HashMap<>();
 
     @RequestMapping(value = "/generateSQL", method = RequestMethod.POST)
     public GenerateContent generateSQL(@RequestBody UserIntent userIntent) {
@@ -356,7 +357,7 @@ public class GenetateSQLController {
         }
         if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()){
             for (DataTable table : relatedTables) {
-                fromClause = fromClause + getTableNameWithSchema(table) + " INNER JOIN ";
+                fromClause = fromClause + getTableNameAndAlias(table, alias) + " INNER JOIN ";
             }
             if (relatedTables.size() > 1){
                 if ( fromClauseFilter == null || fromClauseFilter.equals("")){
@@ -386,14 +387,14 @@ public class GenetateSQLController {
                 if (joinedTables.isEmpty()){
                     joinedTables.add(dt1);
                     joinedTables.add(dt2);
-                    fromClause = fromClause.concat(getTableNameWithSchema(dt1)) + " "
+                    fromClause = fromClause.concat(getTableNameAndAlias(dt1, alias)) + " "
                             + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                            + getTableNameWithSchema(dt2) + " ON " + getDataRelation(dataRelation);
+                            + getTableNameAndAlias(dt2, alias) + " ON " + getDataRelation(dataRelation, alias);
                 } else {
                     if(!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
                         return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
                     } else if (joinedTables.contains(dt1) && joinedTables.contains(dt2)) {
-                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
+                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation, alias);
                     } else {
                         if (!joinedTables.contains(dt1)) {
                             // 考虑left join和right join的方向性
@@ -401,11 +402,11 @@ public class GenetateSQLController {
                                 return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
                             }
                             fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameWithSchema(dt1) + " ON " + getDataRelation(dataRelation);
+                                    + getTableNameAndAlias(dt1, alias) + " ON " + getDataRelation(dataRelation, alias);
                             joinedTables.add(dt1);
                         } else {
                             fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameWithSchema(dt2) + " ON " + getDataRelation(dataRelation);
+                                    + getTableNameAndAlias(dt2, alias) + " ON " + getDataRelation(dataRelation, alias);
                             joinedTables.add(dt2);
                         }
                     }
@@ -414,7 +415,7 @@ public class GenetateSQLController {
             if (joinedTables.size() < relatedTables.size()){
                 for (DataTable dt : relatedTables){
                     if (!joinedTables.contains(dt)) {
-                        fromClause = fromClause.concat(" INNER JOIN ") + getTableNameWithSchema(dt);
+                        fromClause = fromClause.concat(" INNER JOIN ") + getTableNameAndAlias(dt, alias);
                     }
                 }
                 if ( fromClauseFilter != null && !fromClauseFilter.equals("")){
@@ -515,17 +516,66 @@ public class GenetateSQLController {
         return result;
     }
 
+    private String generateAlia(String raw, Map<String, Integer> alias) {
+        if (raw != null && !raw.equals("")) {
+            String result = raw.replaceAll(" ", "_");
+            if (!alias.containsKey(result)) {
+                alias.put(result, 1);
+            } else {
+                int sameNameNum = alias.get(result);
+                alias.put(result, sameNameNum + 1);
+                result = result + String.valueOf(sameNameNum + 1);
+            }
+            return result;
+        } else {
+            return null;
+        }
+    }
+
     private String getTableNameWithSchema(DataTable dataTable){
         DataSchema dataSchema = dataSchemaRepository.findOne(dataTable.getSchemaId());
         return dataSchema.getSchemaName() + "." +dataTable.getTableName();
     }
 
-    private String getDataRelation(DataRelation dataRelation){
+    private String getTableNameOrAlias(DataTable dataTable, Map<String, Integer> alias){
+        if (tableAliases.containsKey(dataTable)) {
+            return tableAliases.get(dataTable);
+        } else {
+            String originAlias = dataTable.getAlias();
+            if (originAlias != null && !originAlias.equals("")) {
+                originAlias = generateAlia(originAlias, alias);
+//                originAlias = originAlias.replaceAll(" ", "_");
+//                if (!alias.containsKey(originAlias)) {
+//                    alias.put(originAlias, 1);
+//                } else {
+//                    int sameNameNum = alias.get(originAlias);
+//                    alias.put(originAlias, sameNameNum + 1);
+//                    originAlias = originAlias + String.valueOf(sameNameNum + 1);
+//                }
+                tableAliases.put(dataTable, originAlias);
+            } else{
+                originAlias = getTableNameWithSchema(dataTable);
+            }
+            return originAlias;
+        }
+    }
+
+    private String getTableNameAndAlias(DataTable dataTable, Map<String, Integer> alias){
+        String tableName = getTableNameWithSchema(dataTable);
+        if (dataTable.getAlias() != null && !dataTable.getAlias().equals("")){
+            String tableAlia = getTableNameOrAlias(dataTable, alias);
+            return tableName + " " + tableAlia;
+        } else {
+            return tableName;
+        }
+    }
+
+    private String getDataRelation(DataRelation dataRelation, Map<String, Integer> alias){
         DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
         DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
         DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
         DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
-        return getTableNameWithSchema(dt1) + "." + df1.getFieldName() + " = " + getTableNameWithSchema(dt2) + "." + df2.getFieldName();
+        return getTableNameOrAlias(dt1, alias) + "." + df1.getFieldName() + " = " + getTableNameOrAlias(dt2, alias) + "." + df2.getFieldName();
     }
 
 
@@ -546,7 +596,8 @@ public class GenetateSQLController {
                 relatedTables.add(dataTable);
             }
             // TODO: 没找到对应字段
-            return getTableNameWithSchema(dataTable) + "." + field.getFieldName();
+            String originAlias = getTableNameOrAlias(dataTable, alias);
+            return originAlias + "." + field.getFieldName();
         }
         // 度量字段
         else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
@@ -562,10 +613,17 @@ public class GenetateSQLController {
             if (!relatedTables.contains(dataTable)){
                 relatedTables.add(dataTable);
             }
-            if (o.getCalType() == 6) {
-                return "COUNT(DISTINCT " + getTableNameWithSchema(dataTable) + "." + field.getFieldName() + ")";
+            String object_name = o.getObjectName();
+            String object_alias = generateAlia(object_name, alias);
+            if (object_alias == null) {
+                object_alias = "";
+            } else {
+                object_alias = " " + object_alias;
             }
-            return aggFunction + "(" + getTableNameWithSchema(dataTable) + "." + field.getFieldName() + ")";
+            if (o.getCalType() == 6) {
+                return "COUNT(DISTINCT " + getTableNameOrAlias(dataTable, alias) + "." + field.getFieldName() + ")" + object_alias;
+            }
+            return aggFunction + "(" + getTableNameOrAlias(dataTable, alias) + "." + field.getFieldName() + ")" + object_alias;
         } else {
             // TODO: object_type出错
             return null;
@@ -590,14 +648,15 @@ public class GenetateSQLController {
         // 设置别名，如果和之前的有重复，则在后面加上不重复的数字后缀
         String objectName = o.getObjectName();
         // 替换所有空格为下划线
-        objectName = objectName.replaceAll(" ", "_");
-        if (!alias.containsKey(objectName)){
-            alias.put(objectName, 1);
-        } else {
-            int sameNameNum = alias.get(objectName);
-            alias.put(objectName, sameNameNum + 1);
-            objectName = objectName + String.valueOf(sameNameNum + 1);
-        }
+        objectName = generateAlia(objectName, alias);
+//        objectName = objectName.replaceAll(" ", "_");
+//        if (!alias.containsKey(objectName)){
+//            alias.put(objectName, 1);
+//        } else {
+//            int sameNameNum = alias.get(objectName);
+//            alias.put(objectName, sameNameNum + 1);
+//            objectName = objectName + String.valueOf(sameNameNum + 1);
+//        }
 
         String calType = calTypeProp.getProperty(String.valueOf(o.getCalType()));
         if (calType == null){

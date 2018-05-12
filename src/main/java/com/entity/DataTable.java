@@ -27,6 +27,9 @@ public class DataTable {
     @Column(name = "schema_id")
     private int schemaId;
 
+    @Column(name = "alias")
+    private String alias;
+
     public int getTableId() {
         return tableId;
     }
@@ -65,5 +68,13 @@ public class DataTable {
 
     public void setSchemaId(int schemaId) {
         this.schemaId = schemaId;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 }
