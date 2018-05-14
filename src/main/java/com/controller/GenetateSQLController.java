@@ -50,6 +50,8 @@ public class GenetateSQLController {
     private Properties operatorProp = new Properties();
     private Properties joinTypeProp = new Properties();
     private Properties calTypeProp = new Properties();
+
+    private Map<String, Integer> alias = new HashMap<>();
     private Map<DataTable, String> tableAliases = new HashMap<>();
     private Map<QueryStatement, String> queryAliases = new HashMap<>();
     private List<DataTable> relatedTables = new ArrayList<>();
@@ -67,6 +69,7 @@ public class GenetateSQLController {
         catch (Exception e){
             return new GenerateContent(ReturnContentEnum.LOAD_PROPERTIES_ERROR, "");
         }
+        alias = new HashMap<>();
         tableAliases = new HashMap<>();
         queryAliases = new HashMap<>();
         relatedTables = new ArrayList<>();
@@ -291,7 +294,6 @@ public class GenetateSQLController {
 
     private GenerateContent generateSQLFromUserIntent(UserIntent userIntent) {
         List<String> groupByObjects = new ArrayList<>();
-        Map<String, Integer> alias = new HashMap<>();
 //        try {
 //            InputStream in = this.getClass().getClassLoader().getResourceAsStream("operator.properties");
 //            operatorProp.load(in);
@@ -314,7 +316,7 @@ public class GenetateSQLController {
         int validOIDNum = 0;
         for (int oID : oIDs) {
             Object o = objectRepository.findOne(oID);
-            String fieldName = oIDtoFieldName(oID, alias);
+            String fieldName = oIDtoFieldName(oID);
             if (fieldName != null) {
                 if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
                     groupByObjects.add(fieldName);
@@ -336,7 +338,7 @@ public class GenetateSQLController {
         // 填充过滤条件
         String whereClause = "";
         if (userIntent.getFilters() != null && !userIntent.getFilters().isEmpty()){
-            String temp = getFilterString(userIntent.getFilters(), userIntent.getLogicOperators(), alias);
+            String temp = getFilterString(userIntent.getFilters(), userIntent.getLogicOperators());
             if (temp.equals("")) {
                 return new GenerateContent(ReturnContentEnum.PARSE_FILTER_ERROR, "");
             }
@@ -355,11 +357,11 @@ public class GenetateSQLController {
         String fromClause = "FROM ";
         String fromClauseFilter = "";
         if (userIntent.getJoinFilter() != null){
-            fromClauseFilter = parseFilter(userIntent.getJoinFilter(), alias);
+            fromClauseFilter = parseFilter(userIntent.getJoinFilter());
         }
         if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()){
             for (DataTable table : relatedTables) {
-                fromClause = fromClause + getTableNameAndAlias(table, alias) + " INNER JOIN ";
+                fromClause = fromClause + getTableNameAndAlias(table) + " INNER JOIN ";
             }
             if (relatedTables.size() > 1){
                 if ( fromClauseFilter == null || fromClauseFilter.equals("")){
@@ -389,14 +391,14 @@ public class GenetateSQLController {
                 if (joinedTables.isEmpty()){
                     joinedTables.add(dt1);
                     joinedTables.add(dt2);
-                    fromClause = fromClause.concat(getTableNameAndAlias(dt1, alias)) + " "
+                    fromClause = fromClause.concat(getTableNameAndAlias(dt1)) + " "
                             + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                            + getTableNameAndAlias(dt2, alias) + " ON " + getDataRelation(dataRelation, alias);
+                            + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
                 } else {
                     if(!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
                         return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
                     } else if (joinedTables.contains(dt1) && joinedTables.contains(dt2)) {
-                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation, alias);
+                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
                     } else {
                         if (!joinedTables.contains(dt1)) {
                             // 考虑left join和right join的方向性
@@ -404,11 +406,11 @@ public class GenetateSQLController {
                                 return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
                             }
                             fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameAndAlias(dt1, alias) + " ON " + getDataRelation(dataRelation, alias);
+                                    + getTableNameAndAlias(dt1) + " ON " + getDataRelation(dataRelation);
                             joinedTables.add(dt1);
                         } else {
                             fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameAndAlias(dt2, alias) + " ON " + getDataRelation(dataRelation, alias);
+                                    + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
                             joinedTables.add(dt2);
                         }
                     }
@@ -417,7 +419,7 @@ public class GenetateSQLController {
             if (joinedTables.size() < relatedTables.size()){
                 for (DataTable dt : relatedTables){
                     if (!joinedTables.contains(dt)) {
-                        fromClause = fromClause.concat(" INNER JOIN ") + getTableNameAndAlias(dt, alias);
+                        fromClause = fromClause.concat(" INNER JOIN ") + getTableNameAndAlias(dt);
                     }
                 }
                 if ( fromClauseFilter != null && !fromClauseFilter.equals("")){
@@ -448,7 +450,7 @@ public class GenetateSQLController {
             orderClause += "ORDER BY ";
 
             for (Order order : orders) {
-                orderClause = orderClause + oIDtoFieldName(order.getObject(), alias);
+                orderClause = orderClause + oIDtoFieldName(order.getObject());
                 if (order.getOrder() != 1) {
                     orderClause += " DESC";
                 }
@@ -479,7 +481,7 @@ public class GenetateSQLController {
 //        }
 //        return false;
 //    }
-    private String getFilterString(List<Filter> filters, List<Integer> logicOps, Map<String, Integer> alias){
+    private String getFilterString(List<Filter> filters, List<Integer> logicOps){
         String result = "";
         if (logicOps.size() != filters.size() - 1){
             return "";
@@ -488,7 +490,7 @@ public class GenetateSQLController {
         List<Integer> deleted = new ArrayList<>();
         for (int i = 0; i<filters.size(); i++) {
             Filter filter = filters.get(i);
-            String filterStatement = parseFilter(filter, alias);
+            String filterStatement = parseFilter(filter);
             if (filterStatement == null) {
                 return "";
             }
@@ -517,7 +519,7 @@ public class GenetateSQLController {
         return result;
     }
 
-    private String generateAlia(String raw, Map<String, Integer> alias) {
+    private String generateAlia(String raw) {
         if (raw != null && !raw.equals("")) {
             String result = raw.replaceAll(" ", "_");
             if (!alias.containsKey(result)) {
@@ -538,13 +540,13 @@ public class GenetateSQLController {
         return dataSchema.getSchemaName() + "." +dataTable.getTableName();
     }
 
-    private String getTableNameOrAlias(DataTable dataTable, Map<String, Integer> alias){
+    private String getTableNameOrAlias(DataTable dataTable){
         if (tableAliases.containsKey(dataTable)) {
             return tableAliases.get(dataTable);
         } else {
             String originAlias = dataTable.getAlias();
             if (originAlias != null && !originAlias.equals("")) {
-                originAlias = generateAlia(originAlias, alias);
+                originAlias = generateAlia(originAlias);
 //                originAlias = originAlias.replaceAll(" ", "_");
 //                if (!alias.containsKey(originAlias)) {
 //                    alias.put(originAlias, 1);
@@ -561,26 +563,26 @@ public class GenetateSQLController {
         }
     }
 
-    private String getTableNameAndAlias(DataTable dataTable, Map<String, Integer> alias){
+    private String getTableNameAndAlias(DataTable dataTable){
         String tableName = getTableNameWithSchema(dataTable);
         if (dataTable.getAlias() != null && !dataTable.getAlias().equals("")){
-            String tableAlia = getTableNameOrAlias(dataTable, alias);
+            String tableAlia = getTableNameOrAlias(dataTable);
             return tableName + " " + tableAlia;
         } else {
             return tableName;
         }
     }
 
-    private String getDataRelation(DataRelation dataRelation, Map<String, Integer> alias){
+    private String getDataRelation(DataRelation dataRelation){
         DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
         DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
         DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
         DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
-        return getTableNameOrAlias(dt1, alias) + "." + df1.getFieldName() + " = " + getTableNameOrAlias(dt2, alias) + "." + df2.getFieldName();
+        return getTableNameOrAlias(dt1) + "." + df1.getFieldName() + " = " + getTableNameOrAlias(dt2) + "." + df2.getFieldName();
     }
 
 
-    private String oIDtoFieldName(int oID, Map<String, Integer> alias){
+    private String oIDtoFieldName(int oID){
         Object o = objectRepository.findOne(oID);
         if (o == null){
             return null;
@@ -597,12 +599,12 @@ public class GenetateSQLController {
                 relatedTables.add(dataTable);
             }
             // TODO: 没找到对应字段
-            String originAlias = getTableNameOrAlias(dataTable, alias);
+            String originAlias = getTableNameOrAlias(dataTable);
             return originAlias + "." + field.getFieldName();
         }
         // 度量字段
         else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType()){
-            return parseMeasureObject(o, alias);
+            return parseMeasureObject(o);
         }
         else if (o.getObjectType() == ObjectTypeEnum.AGG_MEASURE.getType()){
             String aggFunction = calTypeProp.getProperty(String.valueOf(o.getCalType()));
@@ -615,23 +617,23 @@ public class GenetateSQLController {
                 relatedTables.add(dataTable);
             }
             String object_name = o.getObjectName();
-            String object_alias = generateAlia(object_name, alias);
+            String object_alias = generateAlia(object_name);
             if (object_alias == null) {
                 object_alias = "";
             } else {
                 object_alias = " " + object_alias;
             }
             if (o.getCalType() == 6) {
-                return "COUNT(DISTINCT " + getTableNameOrAlias(dataTable, alias) + "." + field.getFieldName() + ")" + object_alias;
+                return "COUNT(DISTINCT " + getTableNameOrAlias(dataTable) + "." + field.getFieldName() + ")" + object_alias;
             }
-            return aggFunction + "(" + getTableNameOrAlias(dataTable, alias) + "." + field.getFieldName() + ")" + object_alias;
+            return aggFunction + "(" + getTableNameOrAlias(dataTable) + "." + field.getFieldName() + ")" + object_alias;
         } else {
             // TODO: object_type出错
             return null;
         }
     }
 
-    private String parseMeasureObject(Object o, Map<String, Integer> alias){
+    private String parseMeasureObject(Object o){
         String measure = o.getSqlText();
         if (measure == null)
         {
@@ -649,7 +651,7 @@ public class GenetateSQLController {
         // 设置别名，如果和之前的有重复，则在后面加上不重复的数字后缀
         String objectName = o.getObjectName();
         // 替换所有空格为下划线
-        objectName = generateAlia(objectName, alias);
+        objectName = generateAlia(objectName);
 //        objectName = objectName.replaceAll(" ", "_");
 //        if (!alias.containsKey(objectName)){
 //            alias.put(objectName, 1);
@@ -675,9 +677,9 @@ public class GenetateSQLController {
         return operatorProp.getProperty(String.valueOf(operatorID));
     }
 
-    private String getFilterStatement(Filter filter, Map<String, Integer> alias){
+    private String getFilterStatement(Filter filter){
         // 得到操作符
-        String fieldName = oIDtoFieldName(filter.getObject(), alias);
+        String fieldName = oIDtoFieldName(filter.getObject());
         String operator = operatorProp.getProperty(String.valueOf(filter.getOperator()));
         if (operator == null){
             // TODO: 错误处理 无法得到操作符
@@ -708,7 +710,7 @@ public class GenetateSQLController {
                 else if (type == 2) {
                     if (boundries.get(0) instanceof Integer && boundries.get(1) instanceof Integer) {
                         return fieldName + " " + operator + " "
-                                + oIDtoFieldName((int) boundries.get(0), alias) + " AND " + oIDtoFieldName((int) boundries.get(1), alias);
+                                + oIDtoFieldName((int) boundries.get(0)) + " AND " + oIDtoFieldName((int) boundries.get(1));
                     } else {
                         // TODO: 错误处理 类型不匹配
                         return null;
@@ -765,7 +767,7 @@ public class GenetateSQLController {
                             return null;
                         }
                         else {
-                            candiStr = candiStr + oIDtoFieldName((int) candidate, alias) + ", ";
+                            candiStr = candiStr + oIDtoFieldName((int) candidate) + ", ";
                         }
                     }
                 }else if (type == 3 || type == 4){
@@ -834,7 +836,7 @@ public class GenetateSQLController {
                             // TODO: 错误处理 类型不匹配
                             return null;
                         }
-                        subFilter = fieldName + " = " + oIDtoFieldName((int) value, alias) + " OR ";
+                        subFilter = fieldName + " = " + oIDtoFieldName((int) value) + " OR ";
                         resultFilter += subFilter;
                     }
                 } else if (type == 3 || type == 4){
@@ -890,7 +892,7 @@ public class GenetateSQLController {
                         // TODO: 错误处理 类型不匹配
                         return null;
                     }
-                    return fieldName + " " + operator + " " + oIDtoFieldName((int) operand, alias);
+                    return fieldName + " " + operator + " " + oIDtoFieldName((int) operand);
                 } else if (type == 3 || type == 4){
                     if (!(operand instanceof Integer)) {
                         // TODO: 错误处理 类型不匹配
@@ -906,18 +908,18 @@ public class GenetateSQLController {
         }
     }
 
-    private String parseFilter(Filter filter, Map<String, Integer> alias){
+    private String parseFilter(Filter filter){
         if (filter.getFilterType() == null){
             return null;
         }
         if (filter.getFilterType() == 2){
-            return getFilterStatement(filter, alias);
+            return getFilterStatement(filter);
         } else if (filter.getFilterType() == 3){
             if (filter.getPredefinedFilterID() == null){
                 return null;
             }
             com.entity.Filter preFilter = filterRepository.findOne(filter.getPredefinedFilterID());
-            String fieldName = oIDtoFieldName(preFilter.getObjectId(), alias);
+            String fieldName = oIDtoFieldName(preFilter.getObjectId());
             String operator = getOperator(preFilter.getOperator());
             // TODO: 处理不同类型的操作数
             String operand = preFilter.getOperands();
@@ -945,7 +947,7 @@ public class GenetateSQLController {
         List<Integer> deleted = new ArrayList<>();
         for (int i = 0; i < filter.getChildren().size(); i++){
             Filter child = filter.getChildren().get(i);
-            String childStatement = parseFilter(child, alias);
+            String childStatement = parseFilter(child);
             if (childStatement == null){
                 return null;
             }
