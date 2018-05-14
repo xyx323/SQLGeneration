@@ -22,6 +22,9 @@ public class QueryStatement {
     @Column(name = "qs_description")
     private String qsDescription;
 
+    @Column(name = "QS_alias")
+    private String qsAlias;
+
     public int getQsId() {
         return qsId;
     }
@@ -60,5 +63,13 @@ public class QueryStatement {
 
     public void setQsDescription(String qsDescription) {
         this.qsDescription = qsDescription;
+    }
+
+    public String getQsAlias() {
+        return qsAlias;
+    }
+
+    public void setQsAlias(String qsAlias) {
+        this.qsAlias = qsAlias;
     }
 }
