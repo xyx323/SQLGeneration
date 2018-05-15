@@ -63,7 +63,15 @@ public class GenetateSQLController {
     private Map<QueryStatement, String> queryAliases = new HashMap<>();
     private List<DataTable> relatedTables = new ArrayList<>();
     private List<QueryStatement> relatedQuerys = new ArrayList<>();
-
+    
+    /** 
+    * @Description: 初始化各项参数，调用generateSQLFromUserIntent()，
+    *               根据用户意图生成SQL语句，返回对象中包括返回状态、成功生成后的SQL语句、错误情况下的错误报告 
+    * @Param: [userIntent] 
+    * @return: com.domain.GenerateContent 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     @RequestMapping(value = "/generateSQL", method = RequestMethod.POST)
     public GenerateContent generateSQL(@RequestBody UserIntent userIntent) {
         try {
@@ -129,7 +137,14 @@ public class GenetateSQLController {
 
         return generateSQLFromUserIntent(userIntent);
     }
-
+    
+    /** 
+    * @Description: 检查objects列表中的对象是否合法 
+    * @Param: [objects] 
+    * @return: com.domain.ReturnContent 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private ReturnContent checkObjects(List<Integer> objects){
             try {
                 for (int objectID : objects) {
@@ -145,6 +160,13 @@ public class GenetateSQLController {
         return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
     }
 
+    /** 
+    * @Description: 检查filters中的过滤条件是否合法 
+    * @Param: [filters] 
+    * @return: com.domain.ReturnContent 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private ReturnContent checkFilters(List<Filter> filters){
          for(com.domain.Filter filter : filters) {
             if (!filter.isAllFieldFilled()) {
@@ -257,6 +279,13 @@ public class GenetateSQLController {
         return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
     }
 
+    /** 
+    * @Description: 检查预定义过滤条件是否合法 
+    * @Param: [predefinedFilters] 
+    * @return: com.domain.ReturnContent 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private ReturnContent checkPredefinedFilters(List<Integer> predefinedFilters){
         try {
             for (int filterID : predefinedFilters) {
@@ -285,6 +314,13 @@ public class GenetateSQLController {
         return new ReturnContent(ReturnContentEnum.SUCCESS.getStatus(), ReturnContentEnum.SUCCESS.getInfo());
     }
 
+    /** 
+    * @Description: 查看简单属性对象对应的field的类型 
+    * @Param: [object] 
+    * @return: java.lang.String 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private String findObjectFieldType(Object object){
         // 属性字段
         if (object.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
@@ -301,6 +337,13 @@ public class GenetateSQLController {
         }
     }
 
+    /** 
+    * @Description: 根据用户意图生成SQL语句，返回对象中包括返回状态、成功生成后的SQL语句、错误情况下的错误报告 
+    * @Param: [userIntent] 
+    * @return: com.domain.GenerateContent 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private GenerateContent generateSQLFromUserIntent(UserIntent userIntent) {
         List<String> groupByObjects = new ArrayList<>();
 //        try {
@@ -503,6 +546,14 @@ public class GenetateSQLController {
 //        }
 //        return false;
 //    }
+    
+    /** 
+    * @Description: 给定过滤条件列表和按顺序排列的逻辑条件列表，将它们拼接为过滤条件语句 
+    * @Param: [filters, logicOps] 
+    * @return: java.lang.String 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private String getFilterString(List<Filter> filters, List<Integer> logicOps){
         String result = "";
         if (logicOps.size() != filters.size() - 1){
@@ -541,6 +592,13 @@ public class GenetateSQLController {
         return result;
     }
 
+    /** 
+    * @Description: 将输入的字符串转为别名，同时保证没有重复别名 
+    * @Param: [raw] 
+    * @return: java.lang.String 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private String generateAlia(String raw) {
         if (raw != null && !raw.equals("")) {
             String result = raw.replaceAll(" ", "_");
@@ -557,11 +615,25 @@ public class GenetateSQLController {
         }
     }
 
+    /** 
+    * @Description: 根据输入的dataTable生成对应的“schema.table” 
+    * @Param: [dataTable] 
+    * @return: java.lang.String 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private String getTableNameWithSchema(DataTable dataTable){
         DataSchema dataSchema = dataSchemaRepository.findOne(dataTable.getSchemaId());
         return dataSchema.getSchemaName() + "." +dataTable.getTableName();
     }
 
+    /** 
+    * @Description: 根据输入的DataTable，如果有别名就返回别名，无别名就返回schema.table
+    * @Param: [dataTable] 
+    * @return: java.lang.String 
+    * @Author: ChunqiChen 
+    * @Date: 2018/5/15 
+    */ 
     private String getTableNameOrAlias(DataTable dataTable){
         if (tableAliases.containsKey(dataTable)) {
             return tableAliases.get(dataTable);
@@ -577,6 +649,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 根据输入的QueryStatement，如果有别名就返回别名，无别名就报错
+    * @Param: [qs]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getQueryNameOrAlias(QueryStatement qs){
         if (queryAliases.containsKey(qs)) {
             return queryAliases.get(qs);
@@ -592,6 +671,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 根据输入的DataTable，如果有别名就返回schema.table与别名，无别名就返回schema.table
+    * @Param: [dataTable]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getTableNameAndAlias(DataTable dataTable){
         String tableName = getTableNameWithSchema(dataTable);
         if (dataTable.getAlias() != null && !dataTable.getAlias().equals("")){
@@ -602,6 +688,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 根据输入的QueryStatement，如果有别名就返回query与别名，无别名就返回query
+    * @Param: [qs]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getQueryNameAndAlias(QueryStatement qs){
         String originQuery = "(" + qs.getQs() +")";
         if (qs.getQsAlias() != null && !qs.getQsAlias().equals("")){
@@ -612,6 +705,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 将DataRelation转换为对应的SQL语句
+    * @Param: [dataRelation]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getDataRelation(DataRelation dataRelation){
         DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
         DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
@@ -621,6 +721,13 @@ public class GenetateSQLController {
     }
 
 
+    /**
+    * @Description: 根据objectID，生成objectID对应的object的SQL语句，如果needAlias为真则附带别名
+    * @Param: [oID, needAlias]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String oIDtoFieldName(int oID, boolean needAlias){
         Object o = objectRepository.findOne(oID);
         if (o == null){
@@ -723,6 +830,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 解析复杂解析对象，将其转换为对应的SQL语句，如果needAlias为真则附带别名
+    * @Param: [o, needAlias]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String parseMeasureObject(Object o, boolean needAlias){
         String measure = o.getSqlText();
         if (measure == null)
@@ -772,11 +886,25 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 得到operatorID对应的操作符
+    * @Param: [operatorID]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getOperator(int operatorID){
         // TODO: 得到操作符
         return operatorProp.getProperty(String.valueOf(operatorID));
     }
 
+    /**
+    * @Description: 输入过滤条件Filter，filterType为2或3，得到其对应的SQL语句
+    * @Param: [filter]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String getFilterStatement(Filter filter){
         // 得到操作符
         String fieldName = oIDtoFieldName(filter.getObject(), false);
@@ -1008,6 +1136,13 @@ public class GenetateSQLController {
         }
     }
 
+    /**
+    * @Description: 递归解析给定的Filter
+    * @Param: [filter]
+    * @return: java.lang.String
+    * @Author: ChunqiChen
+    * @Date: 2018/5/15
+    */
     private String parseFilter(Filter filter){
         if (filter.getFilterType() == null){
             return null;
