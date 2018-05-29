@@ -7,6 +7,7 @@ import com.entity.*;
 import com.entity.Object;
 import com.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +17,7 @@ import sun.security.smartcardio.SunPCSC;
 import java.io.InputStream;
 import java.util.*;
 
+@Scope("prototype")
 @RestController
 public class GenetateSQLController {
     @Autowired
