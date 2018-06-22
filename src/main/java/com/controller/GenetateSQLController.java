@@ -879,12 +879,12 @@ public class GenetateSQLController {
         }
         String calType = calTypeProp.getProperty(String.valueOf(o.getCalType()));
         if (calType == null){
-            return "(" + measure + ")" +objectName;
+            return "(" + measure + ") " +objectName;
         } else {
             if (o.getCalType() == 6) {
-                return "COUNT(DISTINCT " + measure + ")" + objectName;
+                return "COUNT(DISTINCT " + measure + ") " + objectName;
             }
-            return calType + "(" + measure + ")" + objectName;
+            return calType + "(" + measure + ") " + objectName;
         }
     }
 
