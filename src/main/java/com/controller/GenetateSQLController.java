@@ -61,6 +61,7 @@ public class GenetateSQLController {
     private Properties calTypeProp = new Properties();
 
     private Map<String, Integer> alias = new HashMap<>();
+    private Map<Object, String> complexMassureAlias = new HashMap<>();
     private Map<DataTable, String> tableAliases = new HashMap<>();
     private Map<QueryStatement, String> queryAliases = new HashMap<>();
     private List<DataTable> relatedTables = new ArrayList<>();
@@ -374,6 +375,9 @@ public class GenetateSQLController {
             if (fieldName != null) {
                 if (o.getObjectType() == ObjectTypeEnum.ATTRIBUTE.getType()){
                     groupByObjects.add(fieldName);
+                }
+                else if (o.getObjectType() == ObjectTypeEnum.COMPLEX_MEASURE.getType() && o.getCalType() == 0){
+                    groupByObjects.add(complexMassureAlias.get(o));
                 }
                 validOIDNum ++;
                 selectClause += fieldName;
@@ -866,6 +870,7 @@ public class GenetateSQLController {
         String objectName = o.getObjectName();
         // 替换所有空格为下划线
         objectName = generateAlia(objectName);
+        complexMassureAlias.put(o, objectName);
 //        objectName = objectName.replaceAll(" ", "_");
 //        if (!alias.containsKey(objectName)){
 //            alias.put(objectName, 1);
