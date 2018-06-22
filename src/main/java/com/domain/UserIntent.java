@@ -16,6 +16,8 @@ public class UserIntent {
     //应用于本意图的过滤条件
     private List<Integer> predefinedFilters;
     //预过滤条件列表
+    private List<Integer> tables;
+    //自定义的关联表
     private List<Integer> joinCondition;
     //连接条件
     private Filter joinFilter;
@@ -35,6 +37,7 @@ public class UserIntent {
         predefinedFilters = new ArrayList<>();
         orders = new ArrayList<>();
         logicOperators = new ArrayList<>();
+        joinCondition = new ArrayList<>();
         distinct = Boolean.FALSE;
         returnNumber = -1;
     }
@@ -140,5 +143,13 @@ public class UserIntent {
             }
         }
         orders.add(order);
+    }
+
+    public List<Integer> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<Integer> tables) {
+        this.tables = tables;
     }
 }

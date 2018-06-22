@@ -17,6 +17,7 @@ public enum ReturnContentEnum {
     OPERAND_OBJECT_TYPE_ERROR(5,"操作数对象类型与过滤条件对象不匹配"),
     LOAD_PROPERTIES_ERROR(6,"配置文件加载失败"),
     JOIN_CONDITION_ERROR(7,"连接解析失败"),
+    TABLE_JOIN_NUMBER_ERROR(7,"关联表与关联条件数量不匹配"),
     PARSE_FILTER_ERROR(7,"过滤条件解析失败"),
     JOIN_DIRECTION_ERROR(8,"全连接方向错误");
 

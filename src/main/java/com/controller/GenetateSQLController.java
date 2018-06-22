@@ -417,91 +417,101 @@ public class GenetateSQLController {
         if (userIntent.getJoinFilter() != null){
             fromClauseFilter = parseFilter(userIntent.getJoinFilter());
         }
-        if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()){
-            for (DataTable table : relatedTables) {
-                fromClause = fromClause + getTableNameAndAlias(table) + " INNER JOIN ";
+        if (userIntent.getTables() != null && userIntent.getTables().size() != 0){
+            if (userIntent.getJoinCondition() == null || userIntent.getTables().size() != userIntent.getJoinCondition().size() + 1)
+            {
+                return new GenerateContent(ReturnContentEnum.TABLE_JOIN_NUMBER_ERROR, "");
             }
-            for (QueryStatement qs : relatedQuerys) {
-                fromClause = fromClause + getQueryNameAndAlias(qs) + " INNER JOIN ";
-            }
-            if (relatedTables.size() + relatedQuerys.size() > 1){
-                if ( fromClauseFilter == null || fromClauseFilter.equals("")){
-                    fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
-                } else{
-                    fromClause = fromClause.substring(0, fromClause.length()-12) + " ON " + fromClauseFilter + " ";
-                }
-            } else if (relatedTables.size() + relatedQuerys.size() == 1) {
-                fromClause = fromClause.substring(0, fromClause.length()-12) + " ";
-            }else{
-                fromClause = "";
-            }
+            List<Integer> joinTables = userIntent.getTables();
+            DataTable table = dataTableRepository.findOne(joinTables.get(0));
+
         } else {
-            List<DataTable> joinedTables = new ArrayList<>();
-            for (int joinId : userIntent.getJoinCondition()){
-                DataRelation dataRelation = dataRelationRepository.findOne(joinId);
-                if (dataRelation == null){
-                    return new GenerateContent(ReturnContentEnum.JOIN_NOT_FOUND, "");
+            if (userIntent.getJoinCondition() == null || userIntent.getJoinCondition().isEmpty()) {
+                for (DataTable table : relatedTables) {
+                    fromClause = fromClause + getTableNameAndAlias(table) + " INNER JOIN ";
                 }
-                DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
-                DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
-                DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
-                DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
-                if (!(relatedTables.contains(dt1) && relatedTables.contains(dt2))){
-                    return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
+                for (QueryStatement qs : relatedQuerys) {
+                    fromClause = fromClause + getQueryNameAndAlias(qs) + " INNER JOIN ";
                 }
-                if (joinedTables.isEmpty()){
-                    joinedTables.add(dt1);
-                    joinedTables.add(dt2);
-                    fromClause = fromClause.concat(getTableNameAndAlias(dt1)) + " "
-                            + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                            + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
-                } else {
-                    if(!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
-                        return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
-                    } else if (joinedTables.contains(dt1) && joinedTables.contains(dt2)) {
-                        fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
+                if (relatedTables.size() + relatedQuerys.size() > 1) {
+                    if (fromClauseFilter == null || fromClauseFilter.equals("")) {
+                        fromClause = fromClause.substring(0, fromClause.length() - 12) + " ";
                     } else {
-                        if (!joinedTables.contains(dt1)) {
-                            // 考虑left join和right join的方向性
-                            if (dataRelation.getDataRelationMode() != 1){
-                                return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
-                            }
-                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameAndAlias(dt1) + " ON " + getDataRelation(dataRelation);
-                            joinedTables.add(dt1);
+                        fromClause = fromClause.substring(0, fromClause.length() - 12) + " ON " + fromClauseFilter + " ";
+                    }
+                } else if (relatedTables.size() + relatedQuerys.size() == 1) {
+                    fromClause = fromClause.substring(0, fromClause.length() - 12) + " ";
+                } else {
+                    fromClause = "";
+                }
+            } else {
+                List<DataTable> joinedTables = new ArrayList<>();
+                for (int joinId : userIntent.getJoinCondition()) {
+                    DataRelation dataRelation = dataRelationRepository.findOne(joinId);
+                    if (dataRelation == null) {
+                        return new GenerateContent(ReturnContentEnum.JOIN_NOT_FOUND, "");
+                    }
+                    DataField df1 = dataFieldRepository.findOne(dataRelation.getField1Id());
+                    DataTable dt1 = dataTableRepository.findOne(df1.getTableId());
+                    DataField df2 = dataFieldRepository.findOne(dataRelation.getField2Id());
+                    DataTable dt2 = dataTableRepository.findOne(df2.getTableId());
+                    if (!(relatedTables.contains(dt1) && relatedTables.contains(dt2))) {
+                        return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
+                    }
+                    if (joinedTables.isEmpty()) {
+                        joinedTables.add(dt1);
+                        joinedTables.add(dt2);
+                        fromClause = fromClause.concat(getTableNameAndAlias(dt1)) + " "
+                                + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
+                                + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
+                    } else {
+                        if (!joinedTables.contains(dt1) && !joinedTables.contains(dt2)) {
+                            return new GenerateContent(ReturnContentEnum.JOIN_CONDITION_ERROR, "");
+                        } else if (joinedTables.contains(dt1) && joinedTables.contains(dt2)) {
+                            fromClause = fromClause.concat(" AND ") + getDataRelation(dataRelation);
                         } else {
-                            fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
-                                    + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
-                            joinedTables.add(dt2);
+                            if (!joinedTables.contains(dt1)) {
+                                // 考虑left join和right join的方向性
+                                if (dataRelation.getDataRelationMode() != 1) {
+                                    return new GenerateContent(ReturnContentEnum.JOIN_DIRECTION_ERROR, "");
+                                }
+                                fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
+                                        + getTableNameAndAlias(dt1) + " ON " + getDataRelation(dataRelation);
+                                joinedTables.add(dt1);
+                            } else {
+                                fromClause = fromClause + " " + joinTypeProp.get(String.valueOf(dataRelation.getDataRelationMode())) + " "
+                                        + getTableNameAndAlias(dt2) + " ON " + getDataRelation(dataRelation);
+                                joinedTables.add(dt2);
+                            }
                         }
                     }
                 }
-            }
-            if (joinedTables.size() < relatedTables.size()){
-                for (DataTable dt : relatedTables){
-                    if (!joinedTables.contains(dt)) {
-                        fromClause = fromClause.concat(" INNER JOIN ") + getTableNameAndAlias(dt);
+                if (joinedTables.size() < relatedTables.size()) {
+                    for (DataTable dt : relatedTables) {
+                        if (!joinedTables.contains(dt)) {
+                            fromClause = fromClause.concat(" INNER JOIN ") + getTableNameAndAlias(dt);
+                        }
                     }
-                }
-                for (QueryStatement qs : relatedQuerys){
-                    fromClause = fromClause.concat(" INNER JOIN ") + getQueryNameAndAlias(qs);
-                }
-                if ( fromClauseFilter != null && !fromClauseFilter.equals("")){
-                    fromClause = fromClause + " ON " + fromClauseFilter;
-                }
-            } else {
-                for (QueryStatement qs : relatedQuerys){
-                    fromClause = fromClause.concat(" INNER JOIN ") + getQueryNameAndAlias(qs);
-                }
-                if ( fromClauseFilter != null && !fromClauseFilter.equals("")){
-                    if (relatedQuerys.size() == 0) {
-                        fromClause = fromClause + " AND " + fromClauseFilter;
-                    } else {
+                    for (QueryStatement qs : relatedQuerys) {
+                        fromClause = fromClause.concat(" INNER JOIN ") + getQueryNameAndAlias(qs);
+                    }
+                    if (fromClauseFilter != null && !fromClauseFilter.equals("")) {
                         fromClause = fromClause + " ON " + fromClauseFilter;
                     }
+                } else {
+                    for (QueryStatement qs : relatedQuerys) {
+                        fromClause = fromClause.concat(" INNER JOIN ") + getQueryNameAndAlias(qs);
+                    }
+                    if (fromClauseFilter != null && !fromClauseFilter.equals("")) {
+                        if (relatedQuerys.size() == 0) {
+                            fromClause = fromClause + " AND " + fromClauseFilter;
+                        } else {
+                            fromClause = fromClause + " ON " + fromClauseFilter;
+                        }
+                    }
                 }
+                fromClause += " ";
             }
-            fromClause += " ";
         }
 
         // 填充GROUP BY子句
