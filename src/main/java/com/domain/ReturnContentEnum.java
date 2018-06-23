@@ -19,7 +19,9 @@ public enum ReturnContentEnum {
     JOIN_CONDITION_ERROR(7,"连接解析失败"),
     TABLE_JOIN_NUMBER_ERROR(7,"关联表与关联条件数量不匹配"),
     PARSE_FILTER_ERROR(7,"过滤条件解析失败"),
-    JOIN_DIRECTION_ERROR(8,"全连接方向错误");
+    JOIN_DIRECTION_ERROR(8,"全连接方向错误"),
+    UNION_NUMBER_ERROR(9,"union与sql语句数量不匹配"),
+    UNION_TYPE_ERROR(10,"union类型错误");
 
     private ReturnContentEnum(Integer status, String info){
         this.status = status;
